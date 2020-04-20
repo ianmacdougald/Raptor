@@ -30,10 +30,11 @@ GrainRenderer{
 						item = this.pr_FormatPathCollections(item);
 						otherCollections = otherCollections.add(item);
 
+					}/*ELSE*/{
+						this.pr_ErrorPathMsg;
 					};
 
 				}/*ELSE*/{
-					var tmpitem;
 
 					if(item.class==PathName){
 
@@ -80,6 +81,7 @@ GrainRenderer{
 		pathToFolder.do{|item|
 			var pathname = PathName(item);
 
+
 			if(pathname.folders.isEmpty.not){
 				pathname.folders.do{|folder|
 					filepaths = filepaths++this.pr_CollectFilePaths(folder.fullPath);
@@ -91,32 +93,6 @@ GrainRenderer{
 			};
 		};
 
-		filepaths = filepaths.select({|item, index|
-			var return = false;
-			var tmpitem = PathName(item).extension.toLower;
-
-			if(
-				tmpitem=="wav" or: {
-					tmpitem=="aif"
-				} or: {
-					tmpitem=="aiff"
-				} or: {
-					tmpitem=="mp3"
-				} or: {
-					tmpitem=="oof"
-				}
-			){
-
-				return = true;
-
-			};
-
-			return;
-		});
-
-		if(filepaths.isEmpty){
-			Error("No valid paths to audio files found").throw;
-		};
 		^filepaths;
 	}
 
@@ -198,7 +174,6 @@ GrainRenderer{
 		var filepaths = this.pr_CollectFilePaths(audioFilesToRender);
 		this.pr_ProcessAudio(filepaths, duration.value, {
 
-<<<<<<< HEAD
 			filepaths
 			.collect({|item|
 				(type: \allocRead, path: item).yield;
@@ -260,8 +235,6 @@ GrainRenderer{
 
 		var s = this.pr_CheckServer;
 
-=======
->>>>>>> e4e27d4 (removed a check for file existence)
 		if(isRendering.not){
 
 			forkIfNeeded{
@@ -279,8 +252,13 @@ GrainRenderer{
 				);
 
 				p = Pproto({
+					var filepaths = this.pr_CollectFilePaths(audioFilesToRender);
 
-					~bufArray = protoFunc.value;
+					~bufArray = filepaths
+					.collect({|item|
+						(type: \allocRead, path: item).yield;
+						// })
+					});
 
 				},
 
@@ -314,7 +292,7 @@ GrainRenderer{
 
 						var start = tendtime ?? {exprand(1e-3, 1.0)};
 						var end = exprand(1e-3, 1.0);
-						var time = (start + end) * exprand(2.0, 10.0);
+						var time = (start + end) * exprand(2.0, 20);
 
 						tendtime = end;
 						Pn(Pseg([start, end], Pn(time, inf), \exp), 1)
@@ -334,9 +312,9 @@ GrainRenderer{
 
 					\timescale, Pkey(\dur) * Pn(Plazy({|ev|
 
-						var start = tendtime ?? {exprand(1e-3, 2.0)};
-						var end = exprand(1e-3, 2.0);
-						var time = (start + end) * exprand(2.0, 8.0);
+						var start = tendtime ?? {exprand(0.125, 2.0)};
+						var end = exprand(0.125, 2.0);
+						var time = (start + end) * exprand(1e-4, 8.0);
 
 						tendtime = end;
 						Pn(Pseg([start, end], Pn(time, inf), \exp), 1)
@@ -460,6 +438,35 @@ GrainRenderer{
 		|path|
 		format("\n% rendered\n", PathName(path).fileNameWithoutExtension).postln;
 		isRendering = false;
+	}
+
+	*renderN{|n = 1, audioFolder, duration = 20|
+
+		if(renderRoutine.isNil){
+
+			CmdPeriod.doOnce({
+				renderRoutine = nil;
+			});
+
+			renderRoutine = Routine({
+
+				n.do{
+
+					this.render(audioFolder, duration.value);
+
+					while({isRendering}, {1e-4.wait});
+
+				};
+
+				renderRoutine = nil;
+
+			}).play;
+		}/*ELSE*/{
+			if(renderRoutine.isPlaying){
+				"Warning: rendering is already taking place. Stop before restarting".postln;
+			};
+		}
+
 	}
 
 	*stopRender{
