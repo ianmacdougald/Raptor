@@ -1,0 +1,159 @@
+TITLE:: GrainRenderer
+summary:: dynamically renders granular streams from folders of audio files.
+categories:: Libraries>CodeXian>GrainRenderer
+
+DESCRIPTION::
+This class automates a workflow for dynamically creating and recording graular synthesis streams for editing, using in a DAW, or later processing.
+
+This is achieved by encapsulating functions that allow for easy inclusion of folders of audio files or collections of folders of audio files for reading in and writing out(see link::Classes/FileConfigurer:: and the implementation of its subclass link::Classes/GrainRenderer_AudioPath::) and by rendering their output in link::Guides/Non-Realtime-Synthesis:: via link::Classes/Pproto#*render::.
+
+This class has no instance methods as it was designed as a pseudo singleton.
+
+CLASSMETHODS::
+
+method::folder
+Get the folder that the audio files will be written to. This is generated based on the current date.
+
+method::folderPath
+Get and set the path at which the daily folder of audio files will be generated.
+
+method::temporaryFolderPath
+Set a new folder path in which to write audio files. This temporary path will not persist across sessions of the link::Classes/Interpreter:: as is the case with link::Classes/GrainRenderer#*folderPath::.
+
+This can be unset by simply suppling a new string to link::Classes/GrainRenderer#*folderPath:: or strong::nil::.
+
+method::isRendering
+Get the status of the rendering process within the class.
+
+method::render
+Render a granular stream.
+argument::folderOfAudioFiles
+This is a link::Classes/String:: or link::Classes/PathName:: or link::Classes/Collection:: of these that refer to folder(s) of audio files that will be the source of the grains in the stream.
+argument::duration
+The length of the audio file to be rendered in seconds.
+
+method::renderN
+Render multiple streams at a time in a link::Classes/Routine::
+argument::n
+This is an integer that specifies that number of audio files to be rendered.
+argument::folderOfAudioFiles
+This is a link::Classes/String:: or link::Classes/PathName:: or link::Classes/Collection:: of these that refer to folder(s) of audio files that will be the source of the grains in the stream.
+argument::duration
+The length of the audio file to be rendered in seconds.
+
+method::stopRender
+If link::Classes/GrainRenderer#*renderN##*renderN:: is running, one can stop it with this method.
+
+method::isRendering
+Determines the rendering status of the class. For instance, if the class is in the process of rendering an audio file, it cannot render another. In the course of the link::Classes/Routine:: used in link::Classes/GrainRenderer#*renderN##*renderN::, this is changed internally within the class.
+returns::link::Classes/True##true::/link::Classes/False##false::
+
+method::maxBuffers
+The number of buffers that can be read per render during the course of link::Classes/GrainRenderer#*renderN##*renderN::. This was limited because in the case where dozens, hudreds, or thousands of audio files were being processed, every new render (over the course of teletype::n:: renders) were being loaded and then offloaded per the standard use of link::Classes/Pproto::. For this reason, the number of maximum number of link::Classes/Buffer:: objects is limited strong::by default to 64.:: However, this can be changed here.
+
+method::reset
+If an error occurs in the course of rendering a file and link::Classes/GrainRenderer#*isRendering:: is set to strong::true::, calling this method resets the teletype::boolean::, allowing it to be used again.
+
+
+method::mode
+Changes the mode (read link::Classes/SynthDef::) used to generate streams and process audio files.
+argument::newMode
+
+List::
+##strong::\mono::: use this if the audio files being processed are mono. This returns stereo files that are panned.
+
+##strong::\stereo::: use this if the audio files being processed are stereo. In this mode, stereo files are summed to mono and panned.
+
+##strong::\stereoBalance::: in this mode, stereo files are not panned but are balanced left and right.
+
+##strong::\monoNoPan::: in this mode, the input file is mono and the output is also just mono. No panning takes places
+
+##strong::\stereoNoPan::: in this mode, the input file is stereo and the output file is also just stereo. No panning or balancing takes place.
+
+##strong::\stereoToMono:::in this mode, stereo input is reduced to mono output with no panning.
+
+##strong::\monoToStereo:::in this mode, mono is output as stereo with no other balancing or panning.
+::
+
+
+private::fileIncrement
+private::pr_CheckServer
+private::pr_CollectFilePaths
+private::pr_ResetFileIncrement
+private::pr_ErrorPathMsg
+private::pr_FindNextFileName
+private::pr_FormatPathCollections
+private::pr_GetFileName
+private::pr_LoadSynthDefs
+private::pr_MakeFolder
+private::pr_ProcessAudio
+private::pr_RenderedMessage
+
+EXAMPLES::
+
+subsection::Basic usage
+
+code::
+//Rendering one file
+
+(
+GrainRenderer.folderPath_(
+	"~/Desktop/renders".standardizePath
+);
+)
+
+(
+GrainRenderer.render(
+	Platform.resourceDir+/+"sounds",
+	20
+);
+)
+::
+
+
+code::
+
+//Rendering from multiple folders of audio files
+
+/*(
+GrainRenderer.folderPath_(
+"~/Desktop/renders".standardizePath
+);
+)*/
+
+(
+GrainRenderer.renderN(
+	10,
+	[GrainRenderer.folderPath, Platform.resourceDir+/+"sounds"],
+	20
+);
+)
+
+::
+
+
+code::
+//Changing the temporary directory
+(
+GrainRenderer.temporaryFolderPath_(
+	"~/Desktop/tempFolder".standardizePath
+);
+)
+
+(
+GrainRenderer.render(
+	Platform.resourceDir+/+"sounds",
+	20
+);
+)
+::
+
+code::
+//Resetting directory
+
+GrainRenderer.temporaryFolderPath.postln;
+
+GrainRenderer.temporaryFolderPath_(nil);
+
+GrainRenderer.folderPath.postln;
+::

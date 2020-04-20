@@ -124,8 +124,8 @@ GrainCollector : GrainRenderer{
 
 GrainCollector_AudioPath : GrainRenderer_AudioPath{
 
-	*defaultPath{
+	/**defaultPath{
 		^("~/Desktop/audio/grain-collections".standardizePath);
 	}
-
+*/
 }
