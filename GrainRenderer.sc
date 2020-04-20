@@ -173,10 +173,6 @@ GrainRenderer{
 	*render{|audioFilesToRender, duration = 20|
 		var s = this.pr_CheckServer;
 
-		if(File.exists(audioFilesToRender).not){
-			Error("path does not point to folder").throw;
-		};
-
 		if(isRendering.not){
 
 			forkIfNeeded{
