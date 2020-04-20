@@ -198,6 +198,7 @@ GrainRenderer{
 		var filepaths = this.pr_CollectFilePaths(audioFilesToRender);
 		this.pr_ProcessAudio(filepaths, duration.value, {
 
+<<<<<<< HEAD
 			filepaths
 			.collect({|item|
 				(type: \allocRead, path: item).yield;
@@ -259,6 +260,8 @@ GrainRenderer{
 
 		var s = this.pr_CheckServer;
 
+=======
+>>>>>>> e4e27d4 (removed a check for file existence)
 		if(isRendering.not){
 
 			forkIfNeeded{
