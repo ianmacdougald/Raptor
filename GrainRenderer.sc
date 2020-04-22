@@ -11,7 +11,8 @@ GrainRenderer{
 	classvar <>maxBuffers = 64;
 
 	*pr_ErrorPathMsg{
-		Error("Can only render from String, PathName, or collections of these.").throw;
+		Error("Can only render from String, "
+			++"PathName, or collections of these.").throw;
 	}
 
 	*pr_FormatPathCollections{|collection|
@@ -25,6 +26,8 @@ GrainRenderer{
 			this.pr_ErrorPathMsg;
 		}/*ELSE*/{
 
+			//two containers for getting strings and collections of not strings
+			//these are concatenated into a single array that is returned.
 			var strings = [];
 			var otherCollections = [];
 
@@ -691,16 +694,24 @@ GrainRenderer_AudioPath : FileConfigurer{
 
 	//Here we generate a path for the daily folder;
 	*dailyPath{
-		var path = this.path;
+		var path;
 
-		path = path +/+this.dayString;
+		while({path.isNil}, {
+			path = this.path;
+		});
+
+		path = path +/+ this.dayString;
 		^path;
 	}
 
 	//Here we convert the month and day to a string we want
 	*dayString{
 		date = Date.getDate;
-		^(date.month.asString++"-"++date.day.asString);
+		^(
+			date.month.asString++"-"
+			++date.day.asString++"-"
+			++date.year.asString
+		);
 	}
 
 	//writing a new path and remove any temporary paths set
@@ -722,9 +733,15 @@ GrainRenderer_AudioPath : FileConfigurer{
 			internalPath = newpath;
 			temporaryPathSet = true;
 		}/*ELSE*/{
+
 			if(temporaryPathSet){
 				temporaryPathSet = false;
-				internalPath = this.path;
+				internalPath = nil;
+
+				while({internalPath.isNil}, {
+					internalPath = this.path;
+				});
+
 			};
 		};
 
