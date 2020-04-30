@@ -27,7 +27,7 @@ Get the status of the rendering process within the class.
 
 method::render
 Render a granular stream.
-argument::audioFilesToRender
+argument::folderOfAudioFiles
 This is a link::Classes/String:: or link::Classes/PathName:: or link::Classes/Collection:: of these that refer to folder(s) of audio files that will be the source of the grains in the stream.
 argument::duration
 The length of the audio file to be rendered in seconds.
@@ -36,7 +36,7 @@ method::renderN
 Render multiple streams at a time in a link::Classes/Routine::
 argument::n
 This is an integer that specifies that number of audio files to be rendered.
-argument::audioFolder
+argument::folderOfAudioFiles
 This is a link::Classes/String:: or link::Classes/PathName:: or link::Classes/Collection:: of these that refer to folder(s) of audio files that will be the source of the grains in the stream.
 argument::duration
 The length of the audio file to be rendered in seconds.
@@ -49,7 +49,7 @@ Determines the rendering status of the class. For instance, if the class is in t
 returns::link::Classes/True##true::/link::Classes/False##false::
 
 method::maxBuffers
-The number of buffers that can be read per render during the course of link::Classes/GrainRenderer#*renderN##*renderN::. This was limited because in the case where dozens, hudreds, or thousands of audio files were being processed, every new render (over the course of teletype::n:: renders) were being loaded and then offloaded per the standard use of link::Classes/Pproto::. For this reason, the number of maximum number of link::Classes/Buffer:: objects is limited by default to 64. However, this can be changed here.
+The number of buffers that can be read per render during the course of link::Classes/GrainRenderer#*renderN##*renderN::. This was limited because in the case where dozens, hudreds, or thousands of audio files were being processed, every new render (over the course of teletype::n:: renders) were being loaded and then offloaded per the standard use of link::Classes/Pproto::. For this reason, the number of maximum number of link::Classes/Buffer:: objects is limited strong::by default to 64.:: However, this can be changed here.
 
 method::reset
 If an error occurs in the course of rendering a file and link::Classes/GrainRenderer#*isRendering:: is set to strong::true::, calling this method resets the teletype::boolean::, allowing it to be used again.
@@ -66,6 +66,13 @@ List::
 
 ##strong::\stereoBalance::: in this mode, stereo files are not panned but are balanced left and right.
 
+##strong::\monoNoPan::: in this mode, the input file is mono and the output is also just mono. No panning takes places
+
+##strong::\stereoNoPan::: in this mode, the input file is stereo and the output file is also just stereo. No panning or balancing takes place.
+
+##strong::\stereoToMono:::in this mode, stereo input is reduced to mono output with no panning.
+
+##strong::\monoToStereo:::in this mode, mono is output as stereo with no other balancing or panning.
 ::
 
 
