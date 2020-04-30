@@ -1,6 +1,6 @@
 TITLE:: GrainRenderer
 summary:: dynamically renders granular streams from folders of audio files.
-categories:: Libraries>CodeXian>GrainRenderer
+categories:: Libraries>CodexIan>GrainRenderer
 
 DESCRIPTION::
 This class automates a workflow for dynamically creating and recording graular synthesis streams for editing, using in a DAW, or later processing.
