@@ -15,7 +15,7 @@ GrainRenderer{
 		//An interface for the method pr_ProcessAudio.
 		//Here, we add the folder whose files we want to process
 		//and we set a duration for the file we want to render.
-		var filepaths = this.pr_CollectFilePaths(folderOfAudioFiles);
+		var filepaths = this.pr_CollectFilePaths(folderOfAudioFiles).postln;
 		this.pr_ProcessAudio(filepaths, duration.value, {
 
 			filepaths
@@ -156,128 +156,25 @@ GrainRenderer{
 			++"PathName, or collections of these.").throw;
 	}
 
-	*pr_FormatPathCollections{|collection|
-		//This method takes in an arbitrary collection of strings, pathname objects,
-		//and collections of these and returns a flattened array
-		var return;
-
-		//if there is nothing to format
-		if(collection.isEmpty){
-			//return an error message
-			this.pr_ErrorPathMsg;
-		}/*ELSE*/{
-
-			//two containers for getting strings and collections of not strings
-			//these are concatenated into a single array that is returned.
-			var strings = [];
-			var otherCollections = [];
-
-			//run through the collection item by item
-			collection.do{|item, index|
-
-				//if the item is not a string or a PathName object or a Buffer object
-				if(item.isString.not
-					and: {item.isKindOf(PathName).not}
-					and: {item.isKindOf(Buffer).not}
-				){
-
-					//but if it is a collection
-					if(item.isCollection){
-
-						//we can format that collection with this method
-						//as well and return the results into another collection
-						item = this.pr_FormatPathCollections(item);
-						otherCollections = otherCollections.add(item);
-
-					};
-
-				}/*ELSE*/{
-					var tmpitem;
-
-					//if the item are a string or PathName object
-					if(item.isKindOf(PathName)){
-						//make it a string for sure
-						item = item.fullPath;
-					};
-
-					//if the item is a buffer
-					if(item.isKindOf(Buffer)){
-						//get its path
-						item = item.path;
-					};
-
-					//add it to a collection for strings
-					strings = strings.add(item);
-
-				};
-
-			};
-
-			//concatenate the two collections (of collections) together
-			//so that now we have a single dimensional collection of objects
-			return = strings;
-			if(otherCollections.isEmpty.not){
-				otherCollections.do{
-					|item|
-					return = return++item;
-				};
-			};
-
-		};
-
-		^return;
-	}
-
-	*pr_CollectFilePaths{
-		|pathToFolder|
-
-		var filepaths = [];
+	*pr_CollectFilePaths{|pathToFolder|
+		var filepaths;
 
 		//if the pathToFolder is a collection
 		if(pathToFolder.isCollection and: {pathToFolder.isString.not}){
 			//format it such that there are no embedded collections
 			//(and also the strings don't flatten to individual characters)
-			pathToFolder = this.pr_FormatPathCollections(pathToFolder);
+			filepaths = pathToFolder.getPaths;
+			// pathToFolder = this.pr_FormatPathCollections(pathToFolder);
 		}/*ELSE*/{
 
-			//If it is not a collection but instead of a valid (and convertible) type,
-			//embled it within a single collection so we don't have to write to
-			//code paths for collections and single entires
-			if(pathToFolder.isKindOf(PathName)){
-				pathToFolder = pathToFolder.fullPath;
-			};
-
 			if(pathToFolder.isKindOf(Buffer)){
-				pathToFolder = pathToFolder.path;
-			};
-
-			pathToFolder = [pathToFolder];
-
-		};
-
-		//for every entry representing a folder in this processed collection of paths,
-		//go through and collect each file within each respective folder
-		pathToFolder.do{|item|
-			var pathname = PathName(item);
-
-			if(pathname.folders.isEmpty.not){
-				pathname.folders.do{|folder|
-					filepaths = filepaths++this.pr_CollectFilePaths(folder.fullPath);
-				};
-			};
-
-			if(pathname.files.isEmpty.not){
-				pathname.files.do{|file|
-					filepaths = filepaths.add(file.fullPath);
-				};
+				filepaths = pathToFolder.path;
 			}/*ELSE*/{
-				//if there are no files at the file path then assume
-				//that the item passed in is itself a filepath
-				filepaths = filepaths.add(item);
-			}
+				filepaths = pathToFolder.getPaths;
+			};
+
 		};
 
-		//Then weed out the files that are not audio files
 		filepaths = filepaths.select({|item, index|
 			var return = false;
 			var tmpitem = PathName(item).extension.toLower;
@@ -616,7 +513,7 @@ GrainRenderer{
 	//has finished succesfully and that we can render again
 	*pr_RenderedMessage{
 		|path|
-		format("\n% rendered\n", PathName(path).fileNameWithoutExtension).postln;
+		format("\n% rendered\n", PathName(path).fileNameWithoutExtension);
 		isRendering = false;
 	}
 
