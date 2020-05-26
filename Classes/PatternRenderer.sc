@@ -6,7 +6,7 @@ PatternRenderer : ModuleManager {
 	var <>sampleFormat = "int32", <>verbosity = -2;
 	var synthDefProcessor;
 
-	*new {|key|
+	*new {|key(\default)|
 		server = server ? Server.default;
 		^super.new(key).init;
 	}
