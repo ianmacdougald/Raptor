@@ -1,0 +1,9 @@
+(
+version:	"0.1.0", 
+copyright:	"ianmacdougald", 
+name:		"PatternRenderer", 
+path:		"PatternRenderer", 
+summary:	"Dynamically render patterns from modules via NRT synthesis.", 
+helpdoc:	"Help/Libraries/CodexIan/ModularOOC/PatternRenderer", 
+author:		"ianmacdougald"
+)
