@@ -6,9 +6,9 @@ PatternRenderer : ModuleManager {
 	var <>sampleFormat = "int32", <>verbosity = -2;
 	var synthDefProcessor;
 
-	*new {|fileIncrementer|
+	*new {|key|
 		server = server ? Server.default;
-		^super.new.init;
+		^super.new(key).init;
 	}
 
 	init {
@@ -25,7 +25,7 @@ PatternRenderer : ModuleManager {
 	}
 
 	loadModules {
-		var objects = super.class.loadModules;
+		var objects = super.loadModules;
 		synthDef = objects.synthDef;
 		pattern = objects.pattern;
 	}
@@ -60,14 +60,14 @@ PatternRenderer : ModuleManager {
 		this.stoender;
 	}
 
-	stoenderN {
+	stopRenderN {
 		if(this.isRenderingN){
 			nRenderRoutine.stop;
 		};
 		nRenderRoutine = nil;
 	}
 
-	stoender {
+	stopRender {
 		if(this.isRendering){
 			renderRoutine.stop;
 		};
@@ -184,9 +184,9 @@ PatternRenderer : ModuleManager {
 		this.renderMessage(filepath);
 		renderRoutine = nil;
 		synthDefProcessor.remove(synthDef);
-		if(normalize, {
+//		if(normalize, {
 			// filepath.normalizePathAudio(0.8);
-		});
+//		});
 	}
 
 	renderMessage { |path|
