@@ -1,14 +1,12 @@
 PatternRenderer : ModuleManager {
-	classvar <server;
 	var <synthDef, <pattern, <fileIncrementer;
 	var nRenderRoutine, renderRoutine, <server;
 	var <>sampleRate = 48e3, <>headerFormat = "wav";
 	var <>sampleFormat = "int32", <>verbosity = -2;
-	var synthDefProcessor;
+	var synthDefProcessor, repressMessages = false;
 
-	*new {|key(\default)|
-		server = server ? Server.default;
-		^super.new(key).init;
+	*new {|moduleName(\default), from|
+		^super.new(moduleName, from).init;
 	}
 
 	init {
@@ -17,26 +15,22 @@ PatternRenderer : ModuleManager {
 			"~/Desktop/audio/pattern-renders".standardizePath
 		);
 		synthDefProcessor = SynthDefProcessor.new;
-		server = this.class.server;
+		server = Server.default;
 	}
 
-	*server_{|newServer|
-		newServer = newServer ? Server.default;
+	server_{|newServer|
+		if(newServer.isKindOf(Server), {server = newServer});
 	}
 
 	loadModules {
-		var objects = super.loadModules;
-		synthDef = objects.synthDef;
-		pattern = objects.pattern;
+		super.loadModules;
+		synthDef = modules.synthDef;
+		pattern = modules.pattern;
 	}
 
-	checkModules {
-		this.loadModules;
-	}
-
-	synthDef_{|input|
+	/*synthDef_{|input|
 		synthDef.name = this.formatSynthName(input);
-	}
+	}*/
 
 	render {|duration = 10, normalize = false|
 		this.renderBackEnd(duration, normalize);
@@ -56,8 +50,8 @@ PatternRenderer : ModuleManager {
 	}
 
 	stop {
-		this.stoenderN;
-		this.stoender;
+		this.stopRenderN;
+		this.stopRender;
 	}
 
 	stopRenderN {
@@ -190,7 +184,16 @@ PatternRenderer : ModuleManager {
 	}
 
 	renderMessage { |path|
-		format("\n% rendered\n", PathName(path).fileNameWithoutExtension).postln;
+		if(repressMessages.not, {
+			format(
+				"\n% rendered\n", 
+				PathName(path).fileNameWithoutExtension
+			).postln;
+		});
+	}
+
+	repressMessages_{|newbool|
+		if(newbool.isKindOf(Boolean), {repressMessages = newbool});
 	}
 
 	getServerOptions {
@@ -200,12 +203,12 @@ PatternRenderer : ModuleManager {
 	}
 
 	checkFolder {
-		var bool = this.folder.pathMatch.isEmpty.not;
-		if(bool.not, {
+		if(this.folder.isPath.not, {
 			File.mkdir(this.folder);
 			fileIncrementer.reset;
+			^false;
 		});
-		^bool;
+		^true;
 	}
 
 }
