@@ -1,12 +1,12 @@
 PatternRenderer : ModuleManager {
-	var <synthDef, <pattern, <fileIncrementer;
+	var <fileIncrementer;
 	var nRenderRoutine, renderRoutine, <server;
 	var <>sampleRate = 48e3, <>headerFormat = "wav";
 	var <>sampleFormat = "int32", <>verbosity = -2;
-	var synthDefProcessor, repressMessages = false;
+	var synthDefProcessor, <server;
 
-	*new {|moduleName(\default), from|
-		^super.new(moduleName, from).init;
+	*new {|key|
+		^super.new(key).init;
 	}
 
 	init {
@@ -18,23 +18,23 @@ PatternRenderer : ModuleManager {
 		server = Server.default;
 	}
 
+	makeTemplates { 
+		templater.synthDef;	
+		templater.function("pattern");
+	}
+
 	server_{|newServer|
-		if(newServer.isKindOf(Server), {server = newServer});
+		if(newServer.isKindOf(Server), {
+			server = newServer;
+		});
 	}
 
-	loadModules {
-		super.loadModules;
-		synthDef = modules.synthDef;
-		pattern = modules.pattern;
+	checkModules {
+		this.loadModules;
 	}
-
-	/*synthDef_{|input|
-		synthDef.name = this.formatSynthName(input);
-	}*/
 
 	render {|duration = 10, normalize = false|
 		this.renderBackEnd(duration, normalize);
-		^this;
 	}
 
 	renderN {|n, duration = 10, normalize = false|
@@ -46,7 +46,7 @@ PatternRenderer : ModuleManager {
 				};
 				nRenderRoutine = nil;
 			}).play;
-		}/*ELSE*/{"Warning: Render already in ogress".postln};
+		}/*ELSE*/{"Warning: Render already in progress".postln};
 	}
 
 	stop {
@@ -116,28 +116,28 @@ PatternRenderer : ModuleManager {
 	}
 
 	addSynthDefBundle { |score|
-		synthDef.do({ |item|
+		modules.synthDef.do({ |item|
 			this.makeSynthDefBundle(score, item);
 		});
 	}
 
 	makeSynthDefCollsection {
-		if(synthDef.isCollection.not, {
-			synthDef = [synthDef];
+		if(modules.synthDef.isCollection.not, {
+			modules.synthDef = [modules.synthDef];
 		});
 	}
 
 	synhtDef {
-		if(synthDef.size==1){
-			^synthDef[0];
+		if(modules.synthDef.size==1){
+			^modules.synthDef[0];
 		};
-		^synthDef;
+		^modules.synthDef;
 	}
 
 	getScore { |duration(1)|
 		var score = Score.new;
 		this.addSynthDefBundle(score);
-		pattern.value(duration)
+		modules.pattern(duration)
 		.asScore(duration).score.do{|bundle|
 			score.add(bundle);
 		};
@@ -147,11 +147,11 @@ PatternRenderer : ModuleManager {
 
 	prepareToRender {
 		this.loadModules;
-		synthDefProcessor.add(synthDef);
+		synthDefProcessor.add(modules.synthDef);
 		this.checkFolder;
 	}
 
-	renderBackEnd {|duration, normalize|
+	renderBackEnd {|duration, normalize(true)|
 		if(this.isRendering.not, {
 			this.prepareToRender;
 			renderRoutine = forkIfNeeded{
@@ -170,30 +170,21 @@ PatternRenderer : ModuleManager {
 					action: {this.cleanUp(oscpath, path, normalize)}
 				);
 			};
-		}, {"Warning: Render already in ogress".postln});
+		}, {"Warning: Render already in progress".postln});
 	}
 
-	cleanUp { |oscpath, filepath, normalize|
+	cleanUp { |oscpath, filepath, normalize(false)|
 		oscpath !? {File.delete(oscpath)};
 		this.renderMessage(filepath);
 		renderRoutine = nil;
-		synthDefProcessor.remove(synthDef);
-//		if(normalize, {
-			// filepath.normalizePathAudio(0.8);
-//		});
-	}
-
-	renderMessage { |path|
-		if(repressMessages.not, {
-			format(
-				"\n% rendered\n", 
-				PathName(path).fileNameWithoutExtension
-			).postln;
+		synthDefProcessor.remove(modules.synthDef);
+		if(normalize, {
+			filepath.normalizePathAudio(0.8);
 		});
 	}
 
-	repressMessages_{|newbool|
-		if(newbool.isKindOf(Boolean), {repressMessages = newbool});
+	renderMessage { |path|
+		format("\n% rendered\n", PathName(path).fileNameWithoutExtension).postln;
 	}
 
 	getServerOptions {
@@ -203,12 +194,12 @@ PatternRenderer : ModuleManager {
 	}
 
 	checkFolder {
-		if(this.folder.isPath.not, {
+		var bool = this.folder.pathMatch.isEmpty.not;
+		if(bool.not, {
 			File.mkdir(this.folder);
 			fileIncrementer.reset;
-			^false;
 		});
-		^true;
+		^bool;
 	}
 
 }
