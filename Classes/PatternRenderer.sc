@@ -18,8 +18,8 @@ PatternRenderer : ModuleManager {
 		server = Server.default;
 	}
 
-	makeTemplates { 
-		templater.synthDef;	
+	makeTemplates {
+		templater.synthDef;
 		templater.function("pattern");
 	}
 
@@ -127,13 +127,6 @@ PatternRenderer : ModuleManager {
 		});
 	}
 
-	synhtDef {
-		if(modules.synthDef.size==1){
-			^modules.synthDef[0];
-		};
-		^modules.synthDef;
-	}
-
 	getScore { |duration(1)|
 		var score = Score.new;
 		this.addSynthDefBundle(score);
@@ -194,7 +187,7 @@ PatternRenderer : ModuleManager {
 	}
 
 	checkFolder {
-		var bool = this.folder.pathMatch.isEmpty.not;
+		var bool = this.folder.isPath;
 		if(bool.not, {
 			File.mkdir(this.folder);
 			fileIncrementer.reset;
