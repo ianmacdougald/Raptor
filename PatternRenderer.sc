@@ -1,4 +1,4 @@
-PatternRenderer : ModuleManager {
+PatternRenderer : Modular {
 	var <fileIncrementer;
 	var nRenderRoutine, renderRoutine, <server;
 	var <>sampleRate = 48e3, <>headerFormat = "wav";
@@ -6,10 +6,10 @@ PatternRenderer : ModuleManager {
 	var synthDefProcessor, <server;
 
 	*new {|moduleName, from|
-		^super.new(moduleName, from).init;
+		^super.new(moduleName, from).initPatternRenderer;
 	}
 
-	init {
+	initPatternRenderer {
 		fileIncrementer = FileIncrementer.new(
 			"pattern-render-.wav",
 			"~/Desktop/audio/pattern-renders".standardizePath
@@ -27,10 +27,6 @@ PatternRenderer : ModuleManager {
 		if(newServer.isKindOf(Server), {
 			server = newServer;
 		});
-	}
-
-	checkModules {
-		this.loadModules;
 	}
 
 	render {|duration = 10, normalize = false|
@@ -187,7 +183,7 @@ PatternRenderer : ModuleManager {
 	}
 
 	checkFolder {
-		var bool = this.folder.isPath;
+		var bool = this.folder.exists;
 		if(bool.not, {
 			File.mkdir(this.folder);
 			fileIncrementer.reset;
