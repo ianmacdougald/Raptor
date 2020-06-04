@@ -1,9 +1,7 @@
 PatternRenderer : Modular {
-	var <fileIncrementer;
+	var fileIncrementer, <server, <options;
 	var nRenderRoutine, renderRoutine, <server;
-	var <>sampleRate = 48e3, <>headerFormat = "wav";
-	var <>sampleFormat = "int32", <>verbosity = -2;
-	var synthDefProcessor, <server;
+	var synthDefProcessor;
 
 	*new {|moduleName, from|
 		^super.new(moduleName, from).initPatternRenderer;
@@ -16,11 +14,16 @@ PatternRenderer : Modular {
 		);
 		synthDefProcessor = SynthDefProcessor.new;
 		server = Server.default;
+		options = server.options.copy
+			.recHeaderFormat_(fileIncrementer.extension)
+			.verbosity_(-1)
+			.sampleRate_(48e3)
+			.recSampleFormat_("int24");
 	}
 
 	makeTemplates {
 		templater.synthDef;
-		templater.function("pattern");
+		templater.patternRenderer;
 	}
 
 	server_{|newServer|
@@ -30,15 +33,15 @@ PatternRenderer : Modular {
 	}
 
 	render {|duration = 10, normalize = false|
-		this.renderBackEnd(duration, normalize);
+		this.prRender(duration, normalize);
 	}
 
-	renderN {|n, duration = 10, normalize = false|
-		if(this.isRendering.not and: {this.isRenderingN.not}){
+	renderN {|n = 2, duration = 10, normalize = false|
+		if(this.isRendering.not){
 			nRenderRoutine = Routine({
 				n.do{
-					this.renderBackEnd(duration.value, normalize);
-					while({this.isRendering}, {1e-4.wait});
+					this.prRender(duration.value, normalize);
+					while({this.prIsRendering}, {1e-4.wait});
 				};
 				nRenderRoutine = nil;
 			}).play;
@@ -58,7 +61,7 @@ PatternRenderer : Modular {
 	}
 
 	stopRender {
-		if(this.isRendering){
+		if(this.prIsRendering){
 			renderRoutine.stop;
 		};
 		renderRoutine = nil;
@@ -68,8 +71,12 @@ PatternRenderer : Modular {
 		this.stop;
 	}
 
-	isRendering {
+	prIsRendering { 
 		^renderRoutine.isNil.not;
+	}
+
+	isRendering {
+		^(this.prIsRendering or: {this.isRenderingN});
 	}
 
 	isRenderingN {
@@ -78,6 +85,7 @@ PatternRenderer : Modular {
 
 	fileTemplate_{|newTemplate|
 		fileIncrementer.fileTemplate = newTemplate;
+		options.recHeaderFormat = fileIncrementer.extension;
 	}
 
 	folder_{|newFolder|
@@ -95,7 +103,7 @@ PatternRenderer : Modular {
 		^nil;
 	}
 
-	*formatSynthName {|input|
+	*formatName {|input|
 		var nameString = this.name.asString;
 		if(input.name.contains(nameString), {
 			^format("%_%", nameString, input.asString).asSymbol;
@@ -103,8 +111,8 @@ PatternRenderer : Modular {
 		^input.asSymbol;
 	}
 
-	formatSynthName {|input|
-		^this.class.formatSynthName(input);
+	formatName {|input|
+		^this.class.formatName(input);
 	}
 
 	makeSynthDefBundle {|score, toAdd|
@@ -114,12 +122,6 @@ PatternRenderer : Modular {
 	addSynthDefBundle { |score|
 		modules.synthDef.do({ |item|
 			this.makeSynthDefBundle(score, item);
-		});
-	}
-
-	makeSynthDefCollsection {
-		if(modules.synthDef.isCollection.not, {
-			modules.synthDef = [modules.synthDef];
 		});
 	}
 
@@ -140,23 +142,28 @@ PatternRenderer : Modular {
 		this.checkFolder;
 	}
 
-	renderBackEnd {|duration, normalize(true)|
+	prRender {|duration, normalize(true)|
 		if(this.isRendering.not, {
 			this.prepareToRender;
 			renderRoutine = forkIfNeeded{
-				var oscpath = PathName.tmp +/+ UniqueID.next ++ ".osc";
+				var oscpath = PathName.tmp+/+
+				UniqueID.next++".osc";
 				var path = fileIncrementer.increment;
 				this.getScore(duration).recordNRT(
 					oscFilePath: oscpath,
 					outputFilePath: path,
 					inputFilePath: nil,
-					sampleRate: sampleRate,
-					headerFormat: headerFormat,
-					sampleFormat: sampleFormat,
-					options: this.getServerOptions,
+					sampleRate: options.sampleRate,
+					headerFormat: options.recHeaderFormat,
+					sampleFormat: options.recSampleFormat,
+					options: options,
 					completionString: "",
 					duration: duration,
-					action: {this.cleanUp(oscpath, path, normalize)}
+					action: {this.cleanUp(
+						oscpath, 
+						path, 
+						normalize
+					)}
 				);
 			};
 		}, {"Warning: Render already in progress".postln});
@@ -173,13 +180,10 @@ PatternRenderer : Modular {
 	}
 
 	renderMessage { |path|
-		format("\n% rendered\n", PathName(path).fileNameWithoutExtension).postln;
-	}
-
-	getServerOptions {
-		^ServerOptions.new
-		.sampleRate_(sampleRate)
-		.verbosity_(verbosity)
+		format(
+			"\n% rendered\n", 
+			PathName(path).fileNameWithoutExtension
+		).postln;
 	}
 
 	checkFolder {
@@ -190,5 +194,4 @@ PatternRenderer : Modular {
 		});
 		^bool;
 	}
-
 }
