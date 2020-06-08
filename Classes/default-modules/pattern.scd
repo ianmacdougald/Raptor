@@ -1,7 +1,6 @@
 //Define Function below...
 
-{arg ev, duration(1);
-
+{|ev, duration(1), synthDefName|
 	var tendtime = nil;
 	var tenddur = nil;
 	var tendstrum = nil;
@@ -14,7 +13,7 @@
 		}).flat;
 
 	}, Pbind(
-		\instrument, \grainToRender,
+		\instrument, synthDefName,
 		\type, \note,
 		\bufnum, Pn(Plazy({|p_ev|
 			var size = p_ev.bufArray.size;

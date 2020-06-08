@@ -1,7 +1,6 @@
-PatternRenderer : Modular {
-	var fileIncrementer, <server, <options;
+PatternRenderer : Hybrid {
+	var fileIncrementer, <>server, <options;
 	var nRenderRoutine, renderRoutine, <server;
-	var synthDefProcessor;
 
 	*new {|moduleName, from|
 		^super.new(moduleName, from).initPatternRenderer;
@@ -12,8 +11,7 @@ PatternRenderer : Modular {
 			"pattern-render-.wav",
 			"~/Desktop/audio/pattern-renders".standardizePath
 		);
-		synthDefProcessor = SynthDefProcessor.new;
-		server = Server.default;
+		server = server ? Server.default;
 		options = server.options.copy
 			.recHeaderFormat_(fileIncrementer.extension)
 			.verbosity_(-1)
@@ -24,12 +22,6 @@ PatternRenderer : Modular {
 	makeTemplates {
 		templater.synthDef;
 		templater.patternRenderer;
-	}
-
-	server_{|newServer|
-		if(newServer.isKindOf(Server), {
-			server = newServer;
-		});
 	}
 
 	render {|duration = 10, normalize = false|
@@ -103,42 +95,24 @@ PatternRenderer : Modular {
 		^nil;
 	}
 
-	*formatName {|input|
-		var nameString = this.name.asString;
-		if(input.name.contains(nameString), {
-			^format("%_%", nameString, input.asString).asSymbol;
-		});
-		^input.asSymbol;
-	}
-
-	formatName {|input|
-		^this.class.formatName(input);
-	}
-
-	makeSynthDefBundle {|score, toAdd|
-		score.add([0, [\d_recv, toAdd.asBytes]]);
-	}
-
-	addSynthDefBundle { |score|
-		modules.synthDef.do({ |item|
-			this.makeSynthDefBundle(score, item);
-		});
-	}
-
 	getScore { |duration(1)|
 		var score = Score.new;
-		this.addSynthDefBundle(score);
-		modules.pattern(duration)
+		score.add(this.getSynthDefBundle(modules.synthDef));
+		modules.pattern(duration, modules.synthDef.name)
 		.asScore(duration).score.do{|bundle|
 			score.add(bundle);
 		};
+		score.add([duration, [\d_free, modules.synthDef.name]]);
 		score.sort;
 		^score;
 	}
 
+	getSynthDefBundle { |synthDef|
+		^[0, [\d_recv, synthDef.asBytes]];
+	}
+
 	prepareToRender {
 		this.loadModules;
-		synthDefProcessor.add(modules.synthDef);
 		this.checkFolder;
 	}
 
@@ -150,20 +124,12 @@ PatternRenderer : Modular {
 				UniqueID.next++".osc";
 				var path = fileIncrementer.increment;
 				this.getScore(duration).recordNRT(
-					oscFilePath: oscpath,
-					outputFilePath: path,
-					inputFilePath: nil,
-					sampleRate: options.sampleRate,
-					headerFormat: options.recHeaderFormat,
-					sampleFormat: options.recSampleFormat,
-					options: options,
-					completionString: "",
-					duration: duration,
-					action: {this.cleanUp(
-						oscpath, 
-						path, 
-						normalize
-					)}
+					oscpath, path, nil, 
+					options.sampleRate, 
+					options.recHeaderFormat, 
+					options.recSampleFormat, 
+					options, "", duration, 
+					{this.cleanUp(oscpath, path, normalize)};
 				);
 			};
 		}, {"Warning: Render already in progress".postln});
@@ -173,17 +139,13 @@ PatternRenderer : Modular {
 		oscpath !? {File.delete(oscpath)};
 		this.renderMessage(filepath);
 		renderRoutine = nil;
-		synthDefProcessor.remove(modules.synthDef);
 		if(normalize, {
 			filepath.normalizePathAudio(0.8);
 		});
 	}
 
 	renderMessage { |path|
-		format(
-			"\n% rendered\n", 
-			PathName(path).fileNameWithoutExtension
-		).postln;
+		format("\n% rendered\n", PathName(path).fileNameWithoutExtension).postln;
 	}
 
 	checkFolder {

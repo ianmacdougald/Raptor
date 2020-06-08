@@ -1,4 +1,4 @@
-SynthDef.new(\grainToRender, {
+SynthDef.new(\synthDef, {
 	var timescale = \timescale.kr(1);
 	var env = EnvGen.ar(
 		Env.sine(timescale),
