@@ -1,6 +1,5 @@
 TITLE::PatternRenderer
 summary::Dynamically render patterns from modules via NRT synthesis. 
-categories::Libraries>CodexIan>Modular OOC
 related::Classes/Modular
 
 DESCRIPTION::
