@@ -8,20 +8,19 @@
 
 	patternRenderer { | templateName("pattern") |
 		//change the template path to look in this directory
-		this.class.setTemplatePath(this.patternRendererPath);
+		this.setTemplatePath(this.patternRendererPath);
 		//make the template
-		this.class.makeTemplate(
+		this.makeTemplate(
 			templateName, 
-			path, 
 			"patternRenderer"
 		);
 		//reset the template path to the default
-		this.class.resetTemplatePath;
+		this.resetTemplatePath;
 	}
 
     patternRenderer_cleanup { | templateName("cleanup") |
-        this.class.setTemplatePath(this.patternRendererPath); 
-        this.class.makeTemplate(templateName, path, "patternRenderer_cleanup"); 
-        this.class.resetTemplatePath; 
+        this.setTemplatePath(this.patternRendererPath); 
+        this.makeTemplate(templateName, path, "patternRenderer_cleanup"); 
+        this.resetTemplatePath; 
     }
 }

@@ -69,6 +69,8 @@ private::cleanUp
 private::renderMessage
 private::getServerOptions
 private::checkFolder
+private::initHybrid
+private::getSynthDefBundle
 
 EXAMPLES::
 Making a single render is easy:

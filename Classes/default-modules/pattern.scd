@@ -5,13 +5,16 @@
 	var tenddur = nil;
 	var tendstrum = nil;
 	var tendpos = nil;
+	modules.postln; 
 	Pproto({
-
-		~bufArray = "russell-files".ianAudioPath.getPaths
+		//Collect folder of mono audio files into buffers
+		~bufArray = "kitchen-grains".ianAudioPath.getPaths
 		.collect({|item|
 			(type: \allocRead, path: item).yield;
 		}).flat;
-        modules.cleanup.add({~bufArray.do(_.free)});
+
+		//Add a function to to the clean up module (a list).
+	        modules.cleanup.add({~bufArray.do(_.free)});
 
 	}, Pbind(
 		\instrument, modules.synthDef.name,

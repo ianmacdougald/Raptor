@@ -2,7 +2,7 @@ PatternRenderer : Hybrid {
 	var fileIncrementer, <options;
 	var nRenderRoutine, renderRoutine, <server;
 
-    initHybrid {
+	initHybrid {
 		fileIncrementer = FileIncrementer.new(
 			"pattern-render-.wav",
 			"~/Desktop/audio/pattern-renders".standardizePath
@@ -17,7 +17,7 @@ PatternRenderer : Hybrid {
 	makeTemplates {
 		templater.synthDef;
 		templater.patternRenderer;
-        templater.patternRenderer_cleanup;
+	        templater.patternRenderer_cleanup;
 	}
 
 	render {|duration = 10, normalize = false|
@@ -138,7 +138,7 @@ PatternRenderer : Hybrid {
 		if(normalize, {
 			filepath.normalizePathAudio(0.8);
 		});
-        modules.cleaup.do(_.value);
+		modules.cleaup.do(_.value);
 	}
 
 	renderMessage { |path|
