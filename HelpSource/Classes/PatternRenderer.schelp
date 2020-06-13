@@ -1,14 +1,15 @@
 TITLE::PatternRenderer
 summary::Dynamically render patterns from modules via NRT synthesis. 
-related::Classes/Modular
+categories::Libraries>CodexIan>Composites
+related::Classes/Composite
 
 DESCRIPTION::
 
-PatternRenderer automates a workflow in which the goal is to create batches of audio files by rendering patterns via link::Guides/Non-Realtime-Synthesis##NRT synthesis::. PatternRenderer inherits from link::Classes/Modular:: and so specifies the link::Classes/SynthDef:: and link::Tutorials/A-Practical-Guide/PG_01_Introduction##patterns:: using that framework. (See link::Guides/UsingModular::).
+PatternRenderer automates the rendering of  batches of audio files by rendering patterns via link::Guides/Non-Realtime-Synthesis##NRT synthesis::. PatternRenderer inherits from link::Classes/Composite:: and so specifies the link::Classes/SynthDef:: and link::Tutorials/A-Practical-Guide/PG_01_Introduction##patterns:: using that framework. (See link::Guides/MusicCompositing::).
 
 CLASSMETHODS::
 
-copymethod:: Modular *new
+copymethod:: Composite *new
 private::new
 
 private::formatName
