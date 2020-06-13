@@ -1,17 +1,12 @@
 PatternRenderer : Hybrid {
-	var fileIncrementer, <>server, <options;
+	var fileIncrementer, <options;
 	var nRenderRoutine, renderRoutine, <server;
 
-	*new {|moduleName, from|
-		^super.new(moduleName, from).initPatternRenderer;
-	}
-
-	initPatternRenderer {
+    initHybrid {
 		fileIncrementer = FileIncrementer.new(
 			"pattern-render-.wav",
 			"~/Desktop/audio/pattern-renders".standardizePath
 		);
-		server = server ? Server.default;
 		options = server.options.copy
 			.recHeaderFormat_(fileIncrementer.extension)
 			.verbosity_(-1)
