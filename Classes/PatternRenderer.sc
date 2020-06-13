@@ -22,6 +22,7 @@ PatternRenderer : Hybrid {
 	makeTemplates {
 		templater.synthDef;
 		templater.patternRenderer;
+        templater.patternRenderer_cleanup;
 	}
 
 	render {|duration = 10, normalize = false|
@@ -142,6 +143,7 @@ PatternRenderer : Hybrid {
 		if(normalize, {
 			filepath.normalizePathAudio(0.8);
 		});
+        modules.cleaup.do(_.value);
 	}
 
 	renderMessage { |path|
