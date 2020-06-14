@@ -5,6 +5,7 @@
 	var tenddur = nil;
 	var tendstrum = nil;
 	var tendpos = nil;
+	modules.postln; 
 	Pproto({
 		//Collect folder of mono audio files into buffers
 		~bufArray = "kitchen-grains".ianAudioPath.getPaths
