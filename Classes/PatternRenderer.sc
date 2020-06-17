@@ -2,7 +2,7 @@ PatternRenderer : Hybrid {
 	var fileIncrementer, <options;
 	var nRenderRoutine, renderRoutine, <server;
 
-    initHybrid {
+	initHybrid {
 		fileIncrementer = FileIncrementer.new(
 			"pattern-render-.wav",
 			"~/Desktop/audio/pattern-renders".standardizePath
