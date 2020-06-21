@@ -20,11 +20,11 @@ PatternRenderer : Hybrid {
 		templater.patternRenderer_cleanup;
 	}
 
-	render {|duration = 10, normalize = false|
+	render { | duration = 10, normalize = false |
 		this.prRender(duration, normalize);
 	}
 
-	renderN {|n = 2, duration = 10, normalize = false|
+	renderN { | n = 2, duration = 10, normalize = false |
 		if(this.isRendering.not){
 			nRenderRoutine = Routine({
 				n.do{
@@ -36,7 +36,7 @@ PatternRenderer : Hybrid {
 		}/*ELSE*/{"Warning: Render already in progress".postln};
 	}
 
-	stop {
+	reset {
 		this.stopRenderN;
 		this.stopRender;
 	}
@@ -55,20 +55,18 @@ PatternRenderer : Hybrid {
 		renderRoutine = nil;
 	}
 
-	reset { this.stop; }
-
 	prIsRendering { ^renderRoutine.isNil.not; }
 
 	isRendering { ^(this.prIsRendering or: {this.isRenderingN}); }
 
 	isRenderingN { ^nRenderRoutine.isPlaying; }
 
-	fileTemplate_{|newTemplate|
+	fileTemplate_{  | newTemplate |
 		fileIncrementer.fileTemplate = newTemplate;
 		options.recHeaderFormat = fileIncrementer.extension;
 	}
 
-	folder_{|newFolder| fileIncrementer.folder = newFolder; }
+	folder_{ | newFolder | fileIncrementer.folder = newFolder; }
 
 	fileTemplate { ^fileIncrementer.fileTemplate; }
 
@@ -79,7 +77,7 @@ PatternRenderer : Hybrid {
 		^nil;
 	}
 
-	getScore { |duration(1)|
+	getScore { | duration(1) |
 		var score = Score.new;
 		score.add(this.getSynthDefBundle(modules.synthDef));
 		modules.pattern(duration, modules.synthDef.name)
@@ -91,7 +89,7 @@ PatternRenderer : Hybrid {
 		^score;
 	}
 
-	getSynthDefBundle { |synthDef|
+	getSynthDefBundle { | synthDef |
 		^[0, [\d_recv, synthDef.asBytes]];
 	}
 
@@ -100,7 +98,7 @@ PatternRenderer : Hybrid {
 		this.checkFolder;
 	}
 
-	prRender {|duration, normalize(true)|
+	prRender { | duration, normalize(true) |
 		if(this.isRendering.not, {
 			this.prepareToRender;
 			renderRoutine = forkIfNeeded{
@@ -119,7 +117,7 @@ PatternRenderer : Hybrid {
 		}, {"Warning: Render already in progress".postln});
 	}
 
-	cleanUp { |oscpath, filepath, normalize(false)|
+	cleanUp { | oscpath, filepath, normalize(false) |
 		oscpath !? {File.delete(oscpath)};
 		this.renderMessage(filepath);
 		renderRoutine = nil;
