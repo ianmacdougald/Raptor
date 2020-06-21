@@ -8,16 +8,16 @@ PatternRenderer : Hybrid {
 			"~/Desktop/audio/pattern-renders".standardizePath
 		);
 		options = server.options.copy
-			.recHeaderFormat_(fileIncrementer.extension)
-			.verbosity_(-1)
-			.sampleRate_(48e3)
-			.recSampleFormat_("int24");
+		.recHeaderFormat_(fileIncrementer.extension)
+		.verbosity_(-1)
+		.sampleRate_(48e3)
+		.recSampleFormat_("int24");
 	}
 
 	makeTemplates {
 		templater.synthDef;
 		templater.patternRenderer;
-	        templater.patternRenderer_cleanup;
+		templater.patternRenderer_cleanup;
 	}
 
 	render {|duration = 10, normalize = false|
@@ -55,34 +55,22 @@ PatternRenderer : Hybrid {
 		renderRoutine = nil;
 	}
 
-	reset {
-		this.stop;
-	}
+	reset { this.stop; }
 
-	prIsRendering { 
-		^renderRoutine.isNil.not;
-	}
+	prIsRendering { ^renderRoutine.isNil.not; }
 
-	isRendering {
-		^(this.prIsRendering or: {this.isRenderingN});
-	}
+	isRendering { ^(this.prIsRendering or: {this.isRenderingN}); }
 
-	isRenderingN {
-		^nRenderRoutine.isPlaying;
-	}
+	isRenderingN { ^nRenderRoutine.isPlaying; }
 
 	fileTemplate_{|newTemplate|
 		fileIncrementer.fileTemplate = newTemplate;
 		options.recHeaderFormat = fileIncrementer.extension;
 	}
 
-	folder_{|newFolder|
-		fileIncrementer.folder = newFolder;
-	}
+	folder_{|newFolder| fileIncrementer.folder = newFolder; }
 
-	fileTemplate {
-		^fileIncrementer.fileTemplate;
-	}
+	fileTemplate { ^fileIncrementer.fileTemplate; }
 
 	folder {
 		if(fileIncrementer.isNil.not){
@@ -120,11 +108,11 @@ PatternRenderer : Hybrid {
 				UniqueID.next++".osc";
 				var path = fileIncrementer.increment;
 				this.getScore(duration).recordNRT(
-					oscpath, path, nil, 
-					options.sampleRate, 
-					options.recHeaderFormat, 
-					options.recSampleFormat, 
-					options, "", duration, 
+					oscpath, path, nil,
+					options.sampleRate,
+					options.recHeaderFormat,
+					options.recSampleFormat,
+					options, "", duration,
 					{this.cleanUp(oscpath, path, normalize)};
 				);
 			};
@@ -138,7 +126,7 @@ PatternRenderer : Hybrid {
 		if(normalize, {
 			filepath.normalizePathAudio(0.8);
 		});
-		modules.cleaup.do(_.value);
+		modules.cleaunp.do(_.value);
 	}
 
 	renderMessage { |path|
