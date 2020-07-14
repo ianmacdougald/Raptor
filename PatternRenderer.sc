@@ -1,26 +1,31 @@
-PatternRenderer : Hybrid {
-	var fileIncrementer, <options;
+PatternRenderer : CodexHybrid {
+	var incrementer, <options, folder;
 	var nRenderRoutine, renderRoutine, <server;
 
 	initHybrid {
-		fileIncrementer = FileIncrementer.new(
-			"pattern-render-.wav",
+		incrementer = CodexIncrementer.new(
+			"pattern-render.wav",
 			"~/Desktop/audio/pattern-renders".standardizePath
 		);
 		options = server.options.copy
-			.recHeaderFormat_(fileIncrementer.extension)
-			.verbosity_(-1)
-			.sampleRate_(48e3)
-			.recSampleFormat_("int24");
+		.recHeaderFormat_(incrementer.extension)
+		.verbosity_(-1)
+		.sampleRate_(48e3)
+		.recSampleFormat_("int24");
 	}
 
-	makeTemplates {
+	*makeTemplates { | templater |
 		templater.synthDef;
 		templater.patternRenderer;
-	        templater.patternRenderer_cleanup;
+		templater.patternRenderer_cleanup;
 	}
 
-	render {|duration = 10, normalize = false|
+	*defaultModulesPath {
+		^this.filenameSymbol.asString
+		.dirname+/+"Defaults";
+	}
+
+	render { | duration = 10, normalize = false |
 		this.prRender(duration, normalize);
 	}
 
@@ -55,43 +60,26 @@ PatternRenderer : Hybrid {
 		renderRoutine = nil;
 	}
 
-	reset {
-		this.stop;
+	reset { this.stop }
+
+	prIsRendering { ^renderRoutine.notNil }
+
+	isRendering { ^(this.prIsRendering or: {this.isRenderingN}) }
+
+	isRenderingN { ^nRenderRoutine.isPlaying }
+
+	fileTemplate_{ | newTemplate |
+		incrementer.fileTemplate = newTemplate;
+		options.recHeaderFormat = incrementer.extension;
 	}
 
-	prIsRendering { 
-		^renderRoutine.isNil.not;
-	}
+	folder_{ | newFolder | incrementer.folder = newFolder }
 
-	isRendering {
-		^(this.prIsRendering or: {this.isRenderingN});
-	}
+	folder { ^incrementer.folder }
 
-	isRenderingN {
-		^nRenderRoutine.isPlaying;
-	}
+	fileTemplate { ^incrementer.fileTemplate }
 
-	fileTemplate_{|newTemplate|
-		fileIncrementer.fileTemplate = newTemplate;
-		options.recHeaderFormat = fileIncrementer.extension;
-	}
-
-	folder_{|newFolder|
-		fileIncrementer.folder = newFolder;
-	}
-
-	fileTemplate {
-		^fileIncrementer.fileTemplate;
-	}
-
-	folder {
-		if(fileIncrementer.isNil.not){
-			^fileIncrementer.folder;
-		};
-		^nil;
-	}
-
-	getScore { |duration(1)|
+	getScore { | duration(1) |
 		var score = Score.new;
 		score.add(this.getSynthDefBundle(modules.synthDef));
 		modules.pattern(duration, modules.synthDef.name)
@@ -103,35 +91,33 @@ PatternRenderer : Hybrid {
 		^score;
 	}
 
-	getSynthDefBundle { |synthDef|
-		^[0, [\d_recv, synthDef.asBytes]];
-	}
+	getSynthDefBundle { | synthDef | ^[0, [\d_recv, synthDef.asBytes]] }
 
 	prepareToRender {
 		this.loadModules;
 		this.checkFolder;
 	}
 
-	prRender {|duration, normalize(true)|
+	prRender { | duration, normalize(true) |
 		if(this.isRendering.not, {
 			this.prepareToRender;
 			renderRoutine = forkIfNeeded{
 				var oscpath = PathName.tmp+/+
 				UniqueID.next++".osc";
-				var path = fileIncrementer.increment;
+				var path = incrementer.increment;
 				this.getScore(duration).recordNRT(
-					oscpath, path, nil, 
-					options.sampleRate, 
-					options.recHeaderFormat, 
-					options.recSampleFormat, 
-					options, "", duration, 
+					oscpath, path, nil,
+					options.sampleRate,
+					options.recHeaderFormat,
+					options.recSampleFormat,
+					options, "", duration,
 					{this.cleanUp(oscpath, path, normalize)};
 				);
 			};
 		}, {"Warning: Render already in progress".postln});
 	}
 
-	cleanUp { |oscpath, filepath, normalize(false)|
+	cleanUp { | oscpath, filepath, normalize(false) |
 		oscpath !? {File.delete(oscpath)};
 		this.renderMessage(filepath);
 		renderRoutine = nil;
@@ -141,7 +127,7 @@ PatternRenderer : Hybrid {
 		modules.cleaup.do(_.value);
 	}
 
-	renderMessage { |path|
+	renderMessage { | path |
 		format("\n% rendered\n", PathName(path).fileNameWithoutExtension).postln;
 	}
 
@@ -149,7 +135,7 @@ PatternRenderer : Hybrid {
 		var bool = this.folder.exists;
 		if(bool.not, {
 			File.mkdir(this.folder);
-			fileIncrementer.reset;
+			incrementer.reset;
 		});
 		^bool;
 	}
