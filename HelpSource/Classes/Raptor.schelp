@@ -1,0 +1,91 @@
+TITLE::Raptor
+summary::Iterative pattern renderer
+categories::Libraries>CodexIan
+
+DESCRIPTION::
+Raptor iteratively renders patterns as audio files via link::Guides/Non-Realtime-Synthesis##NRT synthesis.:: Raptor utilizes the framework establsihed by link::Overviews/CodexIan##CodexIan:: and so can be interacted with in the ways laid out in its link::Guides/CodexIan##guide.:: 
+
+CLASSMETHODS::
+
+copymethod:: CodexComposite *new
+
+private::defaultModulesPath
+private::makeTemplates
+
+INSTANCEMETHODS::
+
+method::render
+argument::duration
+Time in seconds of the audio to render. 
+argument::normalize
+A boolean that specifies whether or not the rendered file should be normalized.
+
+method::renderN
+argument::n
+An integer specifying how many audio files to render.
+argument::duration
+Time in seconds of the audio to render.
+argument::normalize
+A boolean that specifies whether or not the rendered file should be normalized.
+
+method::stop
+Stops a render in progress.
+private::stopRenderN
+private::stopRender
+
+method::reset
+Resets the rendering process if an error occurred in the middle of it and it got stuck. 
+
+method::isRendering
+returns::Boolean (true or false) if the rendering process is engaged.
+
+private::prIsRendering
+private::isRenderingN
+
+copymethod:: CodexIncrementer -fileTemplate
+copymethod:: CodexIncrementer -folder
+private::folder
+private::fileTemplate
+method::server
+Gets and sets a reference to a server. 
+
+method::options
+Gets the link::Classes/ServerOptions:: that are used to format and render the audio file. 
+method::normalizeFolder 
+Normalizes the audio in the the target folder to the level set by the argument. 
+method::clearFolder
+Deletes all of the files within the target folder. Be careful with this one. 
+private::checkFolder
+private::incrementer
+private::getScore
+private::prepareToRender
+private::prRender
+private::cleanUp
+private::renderMessage
+private::initHybrid
+private::processSynthDefs
+private::removeSynthDefs
+
+EXAMPLES::
+Making a single render is easy.
+code:: 
+r = Raptor.new; 
+r.render(4); 
+::
+The code for making many renders is similar.
+code::
+r = Raptor.new; 
+r.renderN(4, 4);
+::
+To render different patterns, define new modules.
+code::
+r = Raptor.new(\experimental, \default); 
+//If you want, rewrite the pattern modules and then run.
+r.render(4, 4); 
+::
+Different render durations can be specifies with functions or streams.
+code::
+r = Raptor.new;
+r.renderN(4, Pseq([0.2, 0.4, 0.8, 1.0], 1).asStream); 
+r.renderN(4, { exprand(0.5, 16) });
+::
