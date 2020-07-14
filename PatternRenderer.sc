@@ -8,7 +8,11 @@ PatternRenderer : CodexHybrid {
 			"~/Desktop/audio/pattern-renders".standardizePath
 		);
 		options = server.options.copy
+<<<<<<< HEAD:PatternRenderer.sc
 		.recHeaderFormat_(incrementer.extension)
+=======
+		.recHeaderFormat_(fileIncrementer.extension)
+>>>>>>> 674b2a01275568f2acd15d25865a157252ffffbf:Classes/PatternRenderer.sc
 		.verbosity_(-1)
 		.sampleRate_(48e3)
 		.recSampleFormat_("int24");
@@ -20,16 +24,19 @@ PatternRenderer : CodexHybrid {
 		templater.patternRenderer_cleanup;
 	}
 
+<<<<<<< HEAD:PatternRenderer.sc
 	*defaultModulesPath {
 		^this.filenameSymbol.asString
 		.dirname+/+"Defaults";
 	}
 
+=======
+>>>>>>> 674b2a01275568f2acd15d25865a157252ffffbf:Classes/PatternRenderer.sc
 	render { | duration = 10, normalize = false |
 		this.prRender(duration, normalize);
 	}
 
-	renderN {|n = 2, duration = 10, normalize = false|
+	renderN { | n = 2, duration = 10, normalize = false |
 		if(this.isRendering.not){
 			nRenderRoutine = Routine({
 				n.do{
@@ -41,7 +48,7 @@ PatternRenderer : CodexHybrid {
 		}/*ELSE*/{"Warning: Render already in progress".postln};
 	}
 
-	stop {
+	reset {
 		this.stopRenderN;
 		this.stopRender;
 	}
@@ -60,6 +67,7 @@ PatternRenderer : CodexHybrid {
 		renderRoutine = nil;
 	}
 
+<<<<<<< HEAD:PatternRenderer.sc
 	reset { this.stop }
 
 	prIsRendering { ^renderRoutine.notNil }
@@ -76,6 +84,22 @@ PatternRenderer : CodexHybrid {
 	folder_{ | newFolder | incrementer.folder = newFolder }
 
 	folder { ^incrementer.folder }
+=======
+	prIsRendering { ^renderRoutine.isNil.not; }
+
+	isRendering { ^(this.prIsRendering or: {this.isRenderingN}); }
+
+	isRenderingN { ^nRenderRoutine.isPlaying; }
+
+	fileTemplate_{  | newTemplate |
+		fileIncrementer.fileTemplate = newTemplate;
+		options.recHeaderFormat = fileIncrementer.extension;
+	}
+
+	folder_{ | newFolder | fileIncrementer.folder = newFolder; }
+
+	fileTemplate { ^fileIncrementer.fileTemplate; }
+>>>>>>> 674b2a01275568f2acd15d25865a157252ffffbf:Classes/PatternRenderer.sc
 
 	fileTemplate { ^incrementer.fileTemplate }
 
@@ -91,7 +115,13 @@ PatternRenderer : CodexHybrid {
 		^score;
 	}
 
+<<<<<<< HEAD:PatternRenderer.sc
 	getSynthDefBundle { | synthDef | ^[0, [\d_recv, synthDef.asBytes]] }
+=======
+	getSynthDefBundle { | synthDef |
+		^[0, [\d_recv, synthDef.asBytes]];
+	}
+>>>>>>> 674b2a01275568f2acd15d25865a157252ffffbf:Classes/PatternRenderer.sc
 
 	prepareToRender {
 		this.loadModules;
@@ -124,7 +154,7 @@ PatternRenderer : CodexHybrid {
 		if(normalize, {
 			filepath.normalizePathAudio(0.8);
 		});
-		modules.cleaup.do(_.value);
+		modules.cleaunp.do(_.value);
 	}
 
 	renderMessage { | path |
