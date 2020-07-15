@@ -1,6 +1,6 @@
 PatternRenderer : CodexHybrid {
-	var incrementer, <options, folder;
-	var nRenderer, renderRoutine, <server;
+	var <incrementer, <options, folder;
+	var nRenderer, renderRoutine, server;
 
 	initHybrid {
 		incrementer = CodexIncrementer.new(
@@ -21,17 +21,14 @@ PatternRenderer : CodexHybrid {
 	}
 
 	*defaultModulesPath {
-		^this.filenameSymbol.asString
-		.dirname+/+"Defaults";
+		^this.filenameSymbol.asString.dirname+/+"Defaults";
 	}
 
-	render { | duration = 10, normalize = false | this.prRender(duration, normalize) }
-
-	renderN { | n = 2, duration = 10, normalize = false |
+	renderN { | n(2), duration(1), normalize(false) |
 		if(this.isRendering.not){
 			nRenderer = Routine({
 				n.do{
-					this.prRender(duration.value, normalize);
+					this.render(duration.value, normalize);
 					while({this.prIsRendering}, {1e-4.wait});
 				};
 			}).play;
@@ -66,19 +63,27 @@ PatternRenderer : CodexHybrid {
 
 	fileTemplate { ^incrementer.fileTemplate }
 
-	getScore { | duration(1) |
+	/*getScore { | duration(1) |
 		var score = Score.new;
 		score.add([0, [\d_recv, modules.synthDef.asBytes]]);
-		modules.pattern(duration, modules.synthDef.name)
+		modules.pattern(duration)
 		.asScore(duration).score.do{ | bundle |
 			score.add(bundle);
 		};
 		score.add([duration, [\d_free, modules.synthDef.name]]);
 		score.sort;
 		^score;
+	}*/
+
+	getScore { | duration(1.0) |
+		var score = modules.pattern(duration)
+		.asScore(duration); 
+		score.score = [[0, [\d_recv, modules.synthDef.asBytes]]]++score.score;
+		score.add([duration*1.005, [\d_free, modules.synthDef.name.asString]]);
+		^score;
 	}
 
-	prRender { | duration, normalize(true) |
+	render { | duration(1.0), normalize(false) |
 		if(this.isRendering.not, {
 			renderRoutine = forkIfNeeded{
 				var oscpath = PathName.tmp+/+
@@ -110,7 +115,8 @@ PatternRenderer : CodexHybrid {
 	}
 
 	renderMessage { | path |
-		format("\n% rendered\n", PathName(path).fileNameWithoutExtension).postln;
+		format("\n% rendered\n", PathName(path)
+		.fileNameWithoutExtension).postln;
 	}
 
 	checkFolder {
