@@ -1,11 +1,9 @@
 //Define Function below...
-
 { | modules, duration(1) |
 	var tendtime = nil;
 	var tenddur = nil;
 	var tendstrum = nil;
 	var tendpos = nil;
-	modules.postln; 
 	Pproto({
 		//Collect folder of mono audio files into buffers
 		~bufArray = "kitchen-grains".ianAudioPath.getPaths
@@ -19,22 +17,24 @@
 	}, Pbind(
 		\instrument, modules.synthDef.name,
 		\type, \note,
-		\bufnum, Pn(Plazy({| ev |
+		\bufnum, Pn(Plazy({ | ev |
 			var size = ev.bufArray.size;
 			var pat = Pbrown(0.0, size - 1, 1.0, inf);
 			pat;
 		}), inf),
-		\buf, Pfunc({| ev |
-			ev.bufArray[ev.bufnum];
-		}),
-		\pos,Pn(Plazy({| ev |
+		\buf, Pfunc({ | ev |
+			ev.bufArray.postln[
+				rrand(0, ev.bufArray.size - 1)
+			];
+		}), 
+		\pos,Pn(Plazy({ | ev |
 			var start = tendpos ?? {1.0.rand};
 			var end = 1.0.rand;
 			var time = exprand(1e-4, 8.0);
 			tendpos = end;
 			Pn(Pseg([start, end]*0.5, Pn(time, inf), \exp), 1)
 		}), inf),
-		\dur, Pn(Plazy({| ev |
+		\dur, Pn(Plazy({ | ev |
 			var start = tendtime ?? {exprand(1e-3, 1.0)};
 			var end = exprand(1e-3, 1.0);
 			var time = (start + end) * exprand(2.0, 20);
@@ -46,14 +46,14 @@
 		).ampdb,
 		\out, 0,
 		\rate, [0.2, 0.4, 2.0, 4.0, 9.0] * exprand(0.5, 1.25),
-		\timescale, Pkey(\dur) * Pn(Plazy({| ev |
+		\timescale, Pkey(\dur) * Pn(Plazy({ | ev |
 			var start = tendtime ?? {exprand(0.125, 2.0)};
 			var end = exprand(0.125, 2.0);
 			var time = (start + end) * exprand(1e-4, 8.0);
 			tendtime = end;
 			Pn(Pseg([start, end], Pn(time, inf), \exp), 1)
 		}), inf) * [1, 0.5, 0.25, 0.125, 0.125] * 4,
-		\strum, Pn(Plazy({| ev |
+		\strum, Pn(Plazy({ | ev |
 			var start = tendstrum ?? {rrand(0, 1e-2)};
 			var end = rrand(0, 1e-2);
 			var time = (start + end) + 1e-4 * exprand(2.0, 8.0);
