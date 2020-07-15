@@ -78,14 +78,8 @@ PatternRenderer : CodexHybrid {
 		^score;
 	}
 
-	prepareToRender {
-		this.loadModules;
-		this.checkFolder;
-	}
-
 	prRender { | duration, normalize(true) |
 		if(this.isRendering.not, {
-			this.prepareToRender;
 			renderRoutine = forkIfNeeded{
 				var oscpath = PathName.tmp+/+
 				UniqueID.next++".osc";
