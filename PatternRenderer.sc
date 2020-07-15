@@ -7,12 +7,17 @@ PatternRenderer : CodexHybrid {
 			"pattern-render.wav",
 			"~/Desktop/audio/pattern-renders".standardizePath
 		);
+		incrementer.folder.mkdir;
 		options = server.options.copy
 		.recHeaderFormat_(incrementer.extension)
 		.verbosity_(-1)
 		.sampleRate_(48e3)
 		.recSampleFormat_("int24");
 	}
+
+	processSynthDefs { processor.add(this.nameSynthDefs) }
+
+	removeSynthDefs { processor.remove(this.findSynthDefs) }
 
 	*makeTemplates { | templater |
 		templater.synthDef;
@@ -46,7 +51,7 @@ PatternRenderer : CodexHybrid {
 
 	reset { this.stop }
 
-	prIsRendering { ^renderRoutine.isPlaying }
+	prIsRendering { ^renderRoutine.notNil }
 
 	isRendering { ^(this.prIsRendering or: {this.isRenderingN}) }
 
@@ -63,21 +68,9 @@ PatternRenderer : CodexHybrid {
 
 	fileTemplate { ^incrementer.fileTemplate }
 
-	/*getScore { | duration(1) |
-		var score = Score.new;
-		score.add([0, [\d_recv, modules.synthDef.asBytes]]);
-		modules.pattern(duration)
-		.asScore(duration).score.do{ | bundle |
-			score.add(bundle);
-		};
-		score.add([duration, [\d_free, modules.synthDef.name]]);
-		score.sort;
-		^score;
-	}*/
-
 	getScore { | duration(1.0) |
 		var score = modules.pattern(duration)
-		.asScore(duration); 
+		.asScore(duration);
 		score.score = [[0, [\d_recv, modules.synthDef.asBytes]]]++score.score;
 		score.add([duration*1.005, [\d_free, modules.synthDef.name.asString]]);
 		^score;
@@ -85,7 +78,8 @@ PatternRenderer : CodexHybrid {
 
 	render { | duration(1.0), normalize(false) |
 		if(this.isRendering.not, {
-			renderRoutine = forkIfNeeded{
+			if(this.folder.exists.not, { this.folder.mkdir });
+			renderRoutine = forkIfNeeded({
 				var oscpath = PathName.tmp+/+
 				UniqueID.next++".osc";
 				var path = incrementer.increment;
@@ -97,7 +91,7 @@ PatternRenderer : CodexHybrid {
 					options, "", duration,
 					{this.cleanUp(oscpath, path, normalize)};
 				);
-			};
+			});
 		}, {"Warning: Render already in progress".postln});
 	}
 
@@ -128,8 +122,8 @@ PatternRenderer : CodexHybrid {
 		^bool;
 	}
 
-	normalizeFolder { | level(0.8) | 
-		PathName(this.folder).files.do{ | file | 
+	normalizeFolder { | level(0.8) |
+		PathName(this.folder).files.do{ | file |
 			file.fullPath.normalizePathAudio(level);
 		};
 	}

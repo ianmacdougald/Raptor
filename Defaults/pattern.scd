@@ -23,11 +23,9 @@
 			pat;
 		}), inf),
 		\buf, Pfunc({ | ev |
-			ev.bufArray.postln[
-				rrand(0, ev.bufArray.size - 1)
-			];
+			ev.bufArray[ ev.bufnum.asInteger ];
 		}), 
-		\pos,Pn(Plazy({ | ev |
+		\pos, Pn(Plazy({ | ev |
 			var start = tendpos ?? {1.0.rand};
 			var end = 1.0.rand;
 			var time = exprand(1e-4, 8.0);
@@ -35,14 +33,15 @@
 			Pn(Pseg([start, end]*0.5, Pn(time, inf), \exp), 1)
 		}), inf),
 		\dur, Pn(Plazy({ | ev |
-			var start = tendtime ?? {exprand(1e-3, 1.0)};
-			var end = exprand(1e-3, 1.0);
+			var lo = 1/256, hi = 1;
+			var start = tendtime ?? {exprand(lo, hi)};
+			var end = exprand(lo, hi);
 			var time = (start + end) * exprand(2.0, 20);
 			tendtime = end;
 			Pn(Pseg([start, end], Pn(time, inf), \exp), 1)
 		}), inf),
 		\ampDB, (6.dbamp * [3, 2, 1, 1, 0.5].squared.normalizeSum
-			* Pn(Pseg([0, 1, 1, 0], [0.05, 1, 0.05].normalizeSum * duration), 1)
+			* Pn(Pseg([0, 1, 1, 0], Pseq([0.05, 1, 0.05].normalizeSum * duration, inf)), 1)
 		).ampdb,
 		\out, 0,
 		\rate, [0.2, 0.4, 2.0, 4.0, 9.0] * exprand(0.5, 1.25),
