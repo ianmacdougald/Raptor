@@ -114,15 +114,6 @@ PatternRenderer : CodexHybrid {
 			.fileNameWithoutExtension).postln;
 	}
 
-	checkFolder {
-		var bool = this.folder.exists;
-		if(bool.not, {
-			File.mkdir(this.folder);
-			incrementer.reset;
-		});
-		^bool;
-	}
-
 	normalizeFolder { | level(0.8) |
 		PathName(this.folder).files.do{ | file |
 			file.fullPath.normalizePathAudio(level);
