@@ -72,7 +72,7 @@ PatternRenderer : CodexHybrid {
 		var score = modules.pattern(duration)
 		.asScore(duration);
 		score.score = [[0, [\d_recv, modules.synthDef.asBytes]]]++score.score;
-		score.add([duration*1.005, [\d_free, modules.synthDef.name.asString]]);
+		score.add([duration, [\d_free, modules.synthDef.name.asString]]);
 		^score;
 	}
 
@@ -97,16 +97,14 @@ PatternRenderer : CodexHybrid {
 	}
 
 	cleanUp { | oscpath, filepath, normalize(false) |
-		oscpath !? {File.delete(oscpath)};
-		this.renderMessage(filepath);
-		if(normalize, {
-			filepath.normalizePathAudio(0.8);
-		});
+		oscpath !? { File.delete(oscpath) };
+		if(normalize, { filepath.normalizePathAudio(0.8) });
 		if(modules.cleanup.isEmpty.not, {
 			modules.cleaunp.do(_.value);
 			modules.cleanup.clear;
 		});
 		prIsRendering = false;
+		this.renderMessage(filepath);
 	}
 
 	renderMessage { | path |
