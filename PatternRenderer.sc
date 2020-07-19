@@ -1,18 +1,19 @@
 PatternRenderer : CodexHybrid {
-	var <incrementer, <options, folder;
+	var <incrementer, <options, folder, prIsRendering = false;
 	var nRenderer, renderRoutine, server;
 
 	initHybrid {
-		incrementer = CodexIncrementer.new(
+		incrementer = incrementer ?? { CodexIncrementer.new(
 			"pattern-render.wav",
 			"~/Desktop/audio/pattern-renders".standardizePath
-		);
+		) };
 		incrementer.folder.mkdir;
-		options = server.options.copy
-		.recHeaderFormat_(incrementer.extension)
-		.verbosity_(-1)
-		.sampleRate_(48e3)
-		.recSampleFormat_("int24");
+		options = options ?? { server.options.copy
+			.recHeaderFormat_(incrementer.extension)
+			.verbosity_(-1)
+			.sampleRate_(48e3)
+			.memSize_(2.pow(19))
+			.recSampleFormat_("int24") };
 	}
 
 	processSynthDefs { processor.add(this.nameSynthDefs) }
@@ -34,7 +35,7 @@ PatternRenderer : CodexHybrid {
 			nRenderer = Routine({
 				n.do{
 					this.render(duration.value, normalize);
-					while({this.prIsRendering}, {1e-4.wait});
+					while({prIsRendering}, {1e-4.wait});
 				};
 			}).play;
 		}/*ELSE*/{"Warning: Render already in progress".postln};
@@ -45,24 +46,23 @@ PatternRenderer : CodexHybrid {
 		this.stopRender;
 	}
 
-	stopRenderN { if(this.isRenderingN, { nRenderer.stop }) }
+	stopRenderN { if(nRenderer.isPlaying, { nRenderer.stop }) }
 
-	stopRender { if(this.prIsRendering, { renderRoutine.stop }) }
+	stopRender { prIsRendering = false }
 
 	reset { this.stop }
 
-	prIsRendering { ^renderRoutine.notNil }
-
-	isRendering { ^(this.prIsRendering or: {this.isRenderingN}) }
-
-	isRenderingN { ^nRenderer.isPlaying }
+	isRendering { ^(prIsRendering or: {nRenderer.isPlaying}) }
 
 	fileTemplate_{ | newTemplate |
 		incrementer.fileTemplate = newTemplate;
 		options.recHeaderFormat = incrementer.extension;
 	}
 
-	folder_{ | newFolder | incrementer.folder = newFolder.mkdir }
+	folder_{ | newFolder |
+		incrementer.folder = newFolder.mkdir;
+		incrementer.reset;
+	}
 
 	folder { ^incrementer.folder }
 
@@ -83,6 +83,7 @@ PatternRenderer : CodexHybrid {
 				var oscpath = PathName.tmp+/+
 				UniqueID.next++".osc";
 				var path = incrementer.increment;
+				prIsRendering = true;
 				this.getScore(duration).recordNRT(
 					oscpath, path, nil,
 					options.sampleRate,
@@ -98,7 +99,6 @@ PatternRenderer : CodexHybrid {
 	cleanUp { | oscpath, filepath, normalize(false) |
 		oscpath !? {File.delete(oscpath)};
 		this.renderMessage(filepath);
-		renderRoutine = nil;
 		if(normalize, {
 			filepath.normalizePathAudio(0.8);
 		});
@@ -106,11 +106,12 @@ PatternRenderer : CodexHybrid {
 			modules.cleaunp.do(_.value);
 			modules.cleanup.clear;
 		});
+		prIsRendering = false;
 	}
 
 	renderMessage { | path |
 		format("\n% rendered\n", PathName(path)
-		.fileNameWithoutExtension).postln;
+			.fileNameWithoutExtension).postln;
 	}
 
 	checkFolder {
@@ -126,5 +127,10 @@ PatternRenderer : CodexHybrid {
 		PathName(this.folder).files.do{ | file |
 			file.fullPath.normalizePathAudio(level);
 		};
+	}
+
+	clearFolder {
+		File.deleteAll(this.folder);
+		this.folder = this.folder.copy;
 	}
 }

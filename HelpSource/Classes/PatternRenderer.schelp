@@ -9,10 +9,11 @@ PatternRenderer automates the rendering of  batches of audio files by rendering 
 
 CLASSMETHODS::
 
-copymethod:: Composite *new
-private::new
+copymethod:: CodexComposite *new
 
-private::formatName
+private::defaultModulesPath
+private::makeTemplates
+
 
 INSTANCEMETHODS::
 
@@ -49,28 +50,27 @@ private::isRenderingN
 
 copymethod:: FileIncrementer -fileTemplate
 copymethod:: FileIncrementer -folder
+private::folder
+private::fileTemplate
 method::server
 Gets and sets a reference to a server. 
 
 method::options
 Gets the link::Classes/ServerOptions:: that are used to format and render the audio file. 
-
-
-private::fileTemplate
-private::folder
-
-private::formatName
-private::makeSynthDefBundle
-private::addSynthDefBundle
+method::normalizeFolder 
+Normalize the audio in the the target folder to the level set by the argument. 
+method::clearFolder
+Delete all of the files within the target folder. Be careful with this one. 
+private::checkFolder
+private::incrementer
 private::getScore
 private::prepareToRender
 private::prRender
 private::cleanUp
 private::renderMessage
-private::getServerOptions
-private::checkFolder
 private::initHybrid
-private::getSynthDefBundle
+private::processSynthDefs
+private::removeSynthDefs
 
 EXAMPLES::
 Making a single render is easy:
