@@ -88,7 +88,7 @@ code::
 p = PatternRenderer.new(\experimental, \default); 
 //If you want, rewrite the modules in the \experimental directory 
 //and then run the following. 
-//(Note that one can use streams to control durations.)
+//Note that one can use streams to control durations.
 p.renderN(8, Pexprand(0.5, 16.0, inf).asStream); 
 ::
 It is possible to switch between module types to make different renders. 
