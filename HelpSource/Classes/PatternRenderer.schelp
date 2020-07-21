@@ -1,11 +1,10 @@
 TITLE::PatternRenderer
 summary::Dynamically render patterns from modules via NRT synthesis. 
-categories::Libraries>CodexIan>Composites
+categories::Libraries>CodexIan
 related::Classes/Composite
 
 DESCRIPTION::
-
-PatternRenderer automates the rendering of  batches of audio files by rendering patterns via link::Guides/Non-Realtime-Synthesis##NRT synthesis::. PatternRenderer inherits from link::Classes/Composite:: and so specifies the link::Classes/SynthDef:: and link::Tutorials/A-Practical-Guide/PG_01_Introduction##patterns:: using that framework. (See link::Guides/MusicCompositing::).
+PatternRenderer automates the rendering of audio files via link::Guides/Non-Realtime-Synthesis##NRT synthesis:: via patterns. PatternRenderer inherits from link::Classes/CodexHybrid:: and therefore can be interacted with similarly. For me on this,  see link::Guides/CodexIan::.
 
 CLASSMETHODS::
 
@@ -48,8 +47,8 @@ returns::Boolean (true or false) if the rendering process is engaged.
 private::prIsRendering
 private::isRenderingN
 
-copymethod:: FileIncrementer -fileTemplate
-copymethod:: FileIncrementer -folder
+copymethod:: CodexIncrementer -fileTemplate
+copymethod:: CodexIncrementer -folder
 private::folder
 private::fileTemplate
 method::server
@@ -58,9 +57,9 @@ Gets and sets a reference to a server.
 method::options
 Gets the link::Classes/ServerOptions:: that are used to format and render the audio file. 
 method::normalizeFolder 
-Normalize the audio in the the target folder to the level set by the argument. 
+Normalizes the audio in the the target folder to the level set by the argument. 
 method::clearFolder
-Delete all of the files within the target folder. Be careful with this one. 
+Deletes all of the files within the target folder. Be careful with this one. 
 private::checkFolder
 private::incrementer
 private::getScore
