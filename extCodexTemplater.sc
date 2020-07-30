@@ -1,24 +1,24 @@
 + CodexTemplater {
-	patternRendererPath {
+	codexRendererPath {
 		^(
 			Main.packages.asDict.at('PatternRenderer')
 			+/+"Templates"
 		);
 	}
 
-	patternRenderer { | templateName("pattern") |
+	codexRenderer { | templateName("pattern") |
 		this.makeExtTemplate(
 			templateName,
-			"patternRenderer",
-			this.patternRendererPath
+			"codexRenderer",
+			this.codexRendererPath
 		);
 	}
 
-	patternRenderer_cleanup { | templateName("cleanup") |
+	codexRenderer_cleanup { | templateName("cleanup") |
 		this.makeExtTemplate(
 			templateName,
-			"patternRenderer_cleanup",
-			this.patternRendererPath
+			"codexRenderer_cleanup",
+			this.codexRendererPath
 		);
 	}
 }

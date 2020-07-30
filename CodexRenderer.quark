@@ -1,9 +1,9 @@
 (
 version:	"0.1.0", 
 copyright:	"ianmacdougald", 
-name:		"PatternRenderer", 
-path:		"PatternRenderer", 
+name:		"CodexRenderer", 
+path:		"CodexRenderer", 
 summary:	"Dynamically render patterns from modules via NRT synthesis.", 
-helpdoc:	"Help/Libraries/CodexIan/Composites", 
+helpdoc:	"Help/Libraries/CodexIan", 
 author:		"ianmacdougald"
 )

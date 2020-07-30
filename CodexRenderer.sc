@@ -1,11 +1,11 @@
-PatternRenderer : CodexHybrid {
+CodexRenderer : CodexHybrid {
 	var <incrementer, <options, folder, prIsRendering = false;
 	var nRenderer, renderRoutine, server;
 
 	initHybrid {
 		incrementer = incrementer ?? { CodexIncrementer.new(
-			"pattern-render.wav",
-			"~/Desktop/audio/pattern-renders".standardizePath
+			"codex-render.wav",
+			"~/Desktop/audio/codex-renders".standardizePath
 		) };
 		incrementer.folder.mkdir;
 		options = options ?? { server.options.copy
@@ -22,8 +22,8 @@ PatternRenderer : CodexHybrid {
 
 	*makeTemplates { | templater |
 		templater.synthDef;
-		templater.patternRenderer;
-		templater.patternRenderer_cleanup;
+		templater.codexRenderer;
+		templater.codexRenderer_cleanup;
 	}
 
 	*defaultModulesPath {
@@ -32,12 +32,12 @@ PatternRenderer : CodexHybrid {
 
 	renderN { | n(2), duration(1), normalize(false) |
 		if(this.isRendering.not){
-			nRenderer = Routine({
+			nRenderer = forkIfNeeded({
 				n.do{
 					this.render(duration.value, normalize);
 					while({prIsRendering}, {1e-4.wait});
 				};
-			}).play;
+			});
 		}/*ELSE*/{"Warning: Render already in progress".postln};
 	}
 
