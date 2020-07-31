@@ -3,7 +3,7 @@ summary::Iterative pattern renderer
 categories::Libraries>CodexIan
 
 DESCRIPTION::
-Raptor iteratively renders patterns as audio files via link::Guides/Non-Realtime-Synthesis##NRT synthesis.:: Raptor utilizes the framework establsihed by link::Overviews/CodexIan.schelp##CodexIan:: and so can be interacted with in the ways laid out in its link::Guides/CodexIan.schelp##guide.:: 
+Raptor iteratively renders patterns as audio files via link::Guides/Non-Realtime-Synthesis##NRT synthesis.:: Raptor utilizes the framework establsihed by link::Overviews/CodexIan##CodexIan:: and so can be interacted with in the ways laid out in its link::Guides/CodexIan##guide.:: 
 
 CLASSMETHODS::
 
@@ -67,30 +67,25 @@ private::processSynthDefs
 private::removeSynthDefs
 
 EXAMPLES::
-Making a single render is easy:
+Making a single render is easy.
 code:: 
 r = Raptor.new; 
-r.render(8); 
+r.render(4); 
 ::
-The code for making many renders is similar:
+The code for making many renders is similar.
 code::
 r = Raptor.new; 
-r.renderN(8, 8);
+r.renderN(4, 4);
 ::
-Rendering different patterns or code is easy: 
+To render different patterns, define new modules.
 code::
 r = Raptor.new(\experimental, \default); 
-//If you want, rewrite the modules in the \experimental directory 
-//and then run the following. 
-//Note that one can use streams to control durations.
-r.renderN(8, Pexprand(0.5, 16.0, inf).asStream); 
+//If you want, rewrite the pattern modules and then run.
+r.render(4, 4); 
 ::
-It is possible to switch between module types to make different renders. 
-code:: 
-r = Raptor.new(\experimental, \default); 
-//(Note that one can use functions to control durations.)
-r.renderN(8, {exprand(0.5, 16.0)});
-
-r.moduleName_(\default); 
-r.renderN(8, Pseq([1, 2, 3, 2, 1], inf).asStream);
+Different render durations can be specifies with functions or streams.
+code::
+r = Raptor.new;
+r.renderN(4, Pseq([0.2, 0.4, 0.8, 1.0], 1).asStream); 
+r.renderN(4, { exprand(0.5, 16) });
 ::
