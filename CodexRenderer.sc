@@ -23,7 +23,7 @@ CodexRenderer : CodexHybrid {
 	*makeTemplates { | templater |
 		templater.synthDef;
 		templater.codexRenderer;
-		templater.codexRenderer_cleanup;
+		templater.list("cleanup");
 	}
 
 	*defaultModulesPath {
