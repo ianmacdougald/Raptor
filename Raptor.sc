@@ -26,7 +26,7 @@ Raptor : CodexHybrid {
 		templater.list("cleanup");
 	}
 
-	*defaultModulesPath { ^this.filenameString.dirname+/+"Defaults" }
+	*defaultsPath { ^this.filenameString.dirname+/+"Defaults" }
 
 	renderN { | n(2), duration(1), normalize(false) |
 		if(this.isRendering.not){
