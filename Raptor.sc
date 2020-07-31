@@ -26,9 +26,7 @@ Raptor : CodexHybrid {
 		templater.list("cleanup");
 	}
 
-	*defaultModulesPath {
-		^this.filenameSymbol.asString.dirname+/+"Defaults";
-	}
+	*defaultModulesPath { ^this.filenameString.dirname+/+"Defaults" }
 
 	renderN { | n(2), duration(1), normalize(false) |
 		if(this.isRendering.not){
@@ -69,7 +67,7 @@ Raptor : CodexHybrid {
 	fileTemplate { ^incrementer.fileTemplate }
 
 	getScore { | duration(1.0) |
-		var score = modules.(duration)
+		var score = modules.pattern(duration)
 		.asScore(duration);
 		score.score = [[0, [\d_recv, modules.synthDef.asBytes]]]++score.score;
 		score.add([duration, [\d_free, modules.synthDef.name.asString]]);
