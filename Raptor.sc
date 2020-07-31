@@ -22,7 +22,7 @@ Raptor : CodexHybrid {
 
 	*makeTemplates { | templater |
 		templater.synthDef;
-		templater.raptor("").
+		templater.raptor("pattern").
 		templater.list("cleanup");
 	}
 

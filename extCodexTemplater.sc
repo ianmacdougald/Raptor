@@ -1,5 +1,5 @@
 + CodexTemplater {
-	Raptor { | templateName("pattern") |
+	raptor { | templateName("pattern") |
 		this.makeExtTemplate(
 			templateName,
 			"Raptor",
