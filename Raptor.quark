@@ -1,0 +1,9 @@
+(
+version:	"0.1.1", 
+copyright:	"ianmacdougald", 
+name:		"Raptor", 
+path:		"Raptor", 
+summary:	"Render Patterns Iteratively",
+helpdoc:	"Help/Libraries/CodexIan", 
+author:		"ianmacdougald"
+)

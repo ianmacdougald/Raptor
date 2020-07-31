@@ -1,10 +1,9 @@
-TITLE::PatternRenderer
-summary::Dynamically render patterns from modules via NRT synthesis. 
+TITLE::Raptor
+summary::Iterative pattern renderer
 categories::Libraries>CodexIan
-related::Classes/Composite
 
 DESCRIPTION::
-PatternRenderer automates the rendering of audio files via link::Guides/Non-Realtime-Synthesis##NRT synthesis:: via patterns. PatternRenderer inherits from link::Classes/CodexHybrid:: and therefore can be interacted with similarly. For me on this,  see link::Guides/CodexIan::.
+Raptor iteratively renders patterns as audio files via link::Guides/Non-Realtime-Synthesis##NRT synthesis.:: Raptor utilizes the framework establsihed by link::Overviews/CodexIan.schelp##CodexIan:: and so can be interacted with in the ways laid out in its link::Guides/CodexIan.schelp##guide.:: 
 
 CLASSMETHODS::
 
@@ -13,11 +12,7 @@ copymethod:: CodexComposite *new
 private::defaultModulesPath
 private::makeTemplates
 
-
 INSTANCEMETHODS::
-
-private::initPatternRenderer
-private::makeTemplates
 
 method::render
 argument::duration
@@ -74,28 +69,28 @@ private::removeSynthDefs
 EXAMPLES::
 Making a single render is easy:
 code:: 
-p = PatternRenderer.new; 
-p.render(8); 
+r = Raptor.new; 
+r.render(8); 
 ::
 The code for making many renders is similar:
 code::
-p = PatternRenderer.new; 
-p.renderN(8, 8);
+r = Raptor.new; 
+r.renderN(8, 8);
 ::
 Rendering different patterns or code is easy: 
 code::
-p = PatternRenderer.new(\experimental, \default); 
+r = Raptor.new(\experimental, \default); 
 //If you want, rewrite the modules in the \experimental directory 
 //and then run the following. 
 //Note that one can use streams to control durations.
-p.renderN(8, Pexprand(0.5, 16.0, inf).asStream); 
+r.renderN(8, Pexprand(0.5, 16.0, inf).asStream); 
 ::
 It is possible to switch between module types to make different renders. 
 code:: 
-p = PatternRenderer.new(\experimental, \default); 
+r = Raptor.new(\experimental, \default); 
 //(Note that one can use functions to control durations.)
-p.renderN(8, {exprand(0.5, 16.0)});
+r.renderN(8, {exprand(0.5, 16.0)});
 
-p.moduleName_(\default); 
-p.renderN(8, Pseq([1, 2, 3, 2, 1], inf).asStream);
+r.moduleName_(\default); 
+r.renderN(8, Pseq([1, 2, 3, 2, 1], inf).asStream);
 ::

@@ -1,11 +1,11 @@
-CodexRenderer : CodexHybrid {
+Raptor : CodexHybrid {
 	var <incrementer, <options, folder, prIsRendering = false;
 	var nRenderer, renderRoutine, server;
 
 	initHybrid {
 		incrementer = incrementer ?? { CodexIncrementer.new(
-			"codex-render.wav",
-			"~/Desktop/audio/codex-renders".standardizePath
+			"raptor-render.wav",
+			"~/Desktop/audio/raptor-renders".standardizePath
 		) };
 		incrementer.folder.mkdir;
 		options = options ?? { server.options.copy
@@ -22,7 +22,7 @@ CodexRenderer : CodexHybrid {
 
 	*makeTemplates { | templater |
 		templater.synthDef;
-		templater.codexRenderer;
+		templater.raptor("").
 		templater.list("cleanup");
 	}
 
@@ -69,7 +69,7 @@ CodexRenderer : CodexHybrid {
 	fileTemplate { ^incrementer.fileTemplate }
 
 	getScore { | duration(1.0) |
-		var score = modules.pattern(duration)
+		var score = modules.(duration)
 		.asScore(duration);
 		score.score = [[0, [\d_recv, modules.synthDef.asBytes]]]++score.score;
 		score.add([duration, [\d_free, modules.synthDef.name.asString]]);

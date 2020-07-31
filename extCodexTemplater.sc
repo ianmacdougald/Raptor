@@ -1,9 +1,9 @@
 + CodexTemplater {
-	codexRenderer { | templateName("pattern") |
+	Raptor { | templateName("pattern") |
 		this.makeExtTemplate(
 			templateName,
-			"codexRenderer",
-			thisMethod.filenameString.dirname+/+"Templates"
+			"Raptor",
+			thisMethod.filenameString.dirname
 		);
 	}
 }
