@@ -1,9 +1,8 @@
 + CodexTemplater {
 	raptor { | templateName("pattern") |
-		this.makeExtTemplate(
-			templateName,
-			"Raptor",
-			thisMethod.filenameString.dirname
+		this.makeTemplate(
+			templateName, 
+			thisMethod.filenameString.dirname+/+"Raptor.scd"
 		);
 	}
 }
