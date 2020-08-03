@@ -20,9 +20,9 @@ Raptor : CodexHybrid {
 
 	removeSynthDefs { processor.remove(this.findSynthDefs) }
 
-	*makeTemplates { | templater |
+	*makeTemplates {  | templater |
 		templater.synthDef;
-		templater.raptor("pattern").
+		templater.raptor("pattern");
 		templater.list("cleanup");
 	}
 
