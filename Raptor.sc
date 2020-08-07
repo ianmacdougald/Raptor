@@ -67,8 +67,7 @@ Raptor : CodexHybrid {
 	fileTemplate { ^incrementer.fileTemplate }
 
 	getScore { | duration(1.0) |
-		var score = modules.pattern(duration)
-		.asScore(duration);
+		var score = modules.pattern(duration).asScore(duration);
 		score.score = [[0, [\d_recv, modules.synthDef.asBytes]]]++score.score;
 		score.add([duration, [\d_free, modules.synthDef.name.asString]]);
 		^score;
