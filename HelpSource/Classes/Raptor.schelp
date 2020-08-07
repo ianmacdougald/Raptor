@@ -80,7 +80,7 @@ r.renderN(4, 4);
 To render different patterns, define new modules.
 code::
 r = Raptor.new(\experimental, \default);
-//If you want, rewrite the pattern modules and then run.
+//If you want, rewrite the pattern module and then run.
 r.render(4, 4);
 ::
 Different render durations can be specifies with functions or streams.
