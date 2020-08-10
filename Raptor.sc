@@ -26,6 +26,16 @@ Raptor : CodexHybrid {
 		templater.list("cleanup");
 	}
 
+	*contribute { | version |
+		version.add(
+			[\example, this.filenameString.dirname+/+"Modules/example"]
+		); 
+
+		version.add(
+			[\ian, this.filenameString.dirname+/+"Modules/ian"]
+		);
+	}
+
 	*defaultsPath { ^this.filenameString.dirname+/+"Defaults" }
 
 	renderN { | n(2), duration(1), normalize(false) |
@@ -118,5 +128,6 @@ Raptor : CodexHybrid {
 	clearFolder {
 		File.deleteAll(this.folder);
 		this.folder = this.folder.copy;
+		incrementer.reset;
 	}
 }
