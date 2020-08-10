@@ -7,6 +7,6 @@ Raptor iteratively renders [Patterns](https://doc.sccode.org/Tutorials/Streams-P
 To install, run the following in SuperCollider: 
 
 ~~~~
-Quarks.install("https://github.com/ianmacdougald/codexian.git");
-Quarks.install("https://github.com/ianmacdougald/raptor.git");
+Quarks.install("https://github.com/ianmacdougald/CodexIan");
+Quarks.install("https://github.com/ianmacdougald/Raptor");
 ~~~~
