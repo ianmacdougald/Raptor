@@ -1,9 +1,8 @@
 (
-version:	"0.1.1", 
-copyright:	"ianmacdougald", 
-name:		"Raptor", 
-path:		"Raptor", 
-summary:	"Render Patterns Iteratively",
-helpdoc:	"Help/Libraries/CodexIan", 
-author:		"ianmacdougald"
+name:           "Raptor",
+summary:        "Iterative pattern renderer",
+version:        "0.1.0",
+dependencies:	[],		
+author:		"ianmacdougald",
+url:		"https://github.com/ianmacdougald/Raptor"
 )
