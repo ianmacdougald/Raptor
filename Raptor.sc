@@ -118,5 +118,6 @@ Raptor : CodexHybrid {
 	clearFolder {
 		File.deleteAll(this.folder);
 		this.folder = this.folder.copy;
+		incrementer.reset;
 	}
 }
