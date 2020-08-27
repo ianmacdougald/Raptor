@@ -69,23 +69,23 @@ private::removeSynthDefs
 EXAMPLES::
 Making a single render is easy.
 code::
-r = Raptor.new;
+r = Raptor.new(\example);
 r.render(4);
 ::
 The code for making many renders is similar.
 code::
-r = Raptor.new;
+r = Raptor.new(\example);
 r.renderN(4, 4);
 ::
 To render different patterns, define new modules.
 code::
-r = Raptor.new(\experimental, \default);
+r = Raptor.new(\example2, \example);
 //If you want, rewrite the pattern module and then run.
 r.render(4, 4);
 ::
 Different render durations can be specifies with functions or streams.
 code::
-r = Raptor.new;
+r = Raptor.new(\example2);
 r.renderN(4, Pseq([0.2, 0.4, 0.8, 1.0], 1).asStream);
 r.renderN(4, { exprand(0.5, 16) });
 ::
