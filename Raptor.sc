@@ -1,19 +1,22 @@
 Raptor : CodexHybrid {
 	var <incrementer, <options, folder, prIsRendering = false;
-	var nRenderer, renderRoutine, server;
+	var nRenderer, renderRoutine, server, cleanup;
 
 	initHybrid {
 		incrementer = incrementer ?? { CodexIncrementer.new(
 			"raptor-render.wav",
-			"~/Desktop/audio/raptor-renders".standardizePath
+			"~/Desktop/raptor_renders".standardizePath
 		) };
 		incrementer.folder.mkdir;
-		options = options ?? { server.options.copy
+		options = options ?? {
+			server.options.copy
 			.recHeaderFormat_(incrementer.extension)
 			.verbosity_(-1)
 			.sampleRate_(48e3)
 			.memSize_(2.pow(19))
-			.recSampleFormat_("int24") };
+			.recSampleFormat_("int24")
+		};
+		cleanup = List.new;
 	}
 
 	processSynthDefs { processor.add(this.nameSynthDefs) }
@@ -23,16 +26,15 @@ Raptor : CodexHybrid {
 	*makeTemplates {  | templater |
 		templater.synthDef;
 		templater.raptor("pattern");
-		templater.list("cleanup");
 	}
 
 	*contribute { | version |
 		version.add(
-			[\example, Main.packages.asDict.at(Raptor)+/+"Modules/example"]
-		); 
+			[\example, Main.packages.asDict.at(\Raptor)+/+"example"]
+		);
 
 		version.add(
-			[\ian, Main.packages.asDict.at(Raptor)+/+"Modules/ian"]
+			[\ian, Main.packages.asDict.at(\Raptor)+/+"ian"]
 		);
 	}
 
@@ -75,7 +77,7 @@ Raptor : CodexHybrid {
 	fileTemplate { ^incrementer.fileTemplate }
 
 	getScore { | duration(1.0) |
-		var score = modules.pattern(duration).asScore(duration);
+		var score = modules.pattern(duration, cleanup).asScore(duration);
 		score.score = [[0, [\d_recv, modules.synthDef.asBytes]]]++score.score;
 		score.add([duration, [\d_free, modules.synthDef.name.asString]]);
 		^score;
@@ -95,7 +97,7 @@ Raptor : CodexHybrid {
 					options.recHeaderFormat,
 					options.recSampleFormat,
 					options, "", duration,
-					{this.cleanUp(oscpath, path, normalize)};
+					{ this.cleanUp(oscpath, path, normalize) };
 				);
 			});
 		}, {"Warning: Render already in progress".postln});
@@ -104,9 +106,9 @@ Raptor : CodexHybrid {
 	cleanUp { | oscpath, filepath, normalize(false) |
 		oscpath !? { File.delete(oscpath) };
 		if(normalize, { filepath.normalizePathAudio(0.8) });
-		if(modules.cleanup.isEmpty.not, {
-			modules.cleaunp.do(_.value);
-			modules.cleanup.clear;
+		if(cleanup.isEmpty.not, {
+			cleanup.do(_.value);
+			cleanup.clear;
 		});
 		prIsRendering = false;
 		this.renderMessage(filepath);
