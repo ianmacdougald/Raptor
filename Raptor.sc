@@ -28,11 +28,11 @@ Raptor : CodexHybrid {
 
 	*contribute { | version |
 		version.add(
-			[\example, Main.packages.asDict.at(Raptor)+/+"Modules/example"]
+			[\example, Main.packages.asDict.at(Raptor)+/+"example"]
 		); 
 
 		version.add(
-			[\ian, Main.packages.asDict.at(Raptor)+/+"Modules/ian"]
+			[\ian, Main.packages.asDict.at(Raptor)+/+"ian"]
 		);
 	}
 
