@@ -28,15 +28,13 @@ Raptor : CodexHybrid {
 
 	*contribute { | version |
 		version.add(
-			[\example, this.filenameString.dirname+/+"Modules/example"]
+			[\example, Main.packages.asDict.at(Raptor)+/+"Modules/example"]
 		); 
 
 		version.add(
-			[\ian, this.filenameString.dirname+/+"Modules/ian"]
+			[\ian, Main.packages.asDict.at(Raptor)+/+"Modules/ian"]
 		);
 	}
-
-	*defaultsPath { ^this.filenameString.dirname+/+"Defaults" }
 
 	renderN { | n(2), duration(1), normalize(false) |
 		if(this.isRendering.not){
