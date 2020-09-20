@@ -2,7 +2,7 @@
 	raptor { | templateName("pattern") |
 		this.makeTemplate(
 			templateName, 
-			thisMethod.filenameString.dirname+/+"Raptor.scd"
+			thisMethod.filenameString.dirname+/+"raptor.scd"
 		);
 	}
 }
