@@ -1,10 +1,10 @@
 Raptor : CodexHybrid {
 	var <incrementer, <options, folder, prIsRendering = false;
-	var nRenderer, renderRoutine, server, cleanup;
+	var nRenderer, renderRoutine, server, cleanup_list;
 
 	initHybrid {
 		incrementer = incrementer ?? { CodexIncrementer.new(
-			"raptor-render.wav",
+			"raptor_render.wav",
 			"~/Desktop/raptor_renders".standardizePath
 		) };
 		incrementer.folder.mkdir;
@@ -16,7 +16,7 @@ Raptor : CodexHybrid {
 			.memSize_(2.pow(19))
 			.recSampleFormat_("int24")
 		};
-		cleanup = List.new;
+		cleanup_list = List.new;
 	}
 
 	processSynthDefs { processor.add(this.nameSynthDefs) }
@@ -77,7 +77,7 @@ Raptor : CodexHybrid {
 	fileTemplate { ^incrementer.fileTemplate }
 
 	getScore { | duration(1.0) |
-		var score = modules.pattern(duration, cleanup).asScore(duration);
+		var score = modules.pattern(duration, cleanup_list).asScore(duration);
 		score.score = [[0, [\d_recv, modules.synthDef.asBytes]]]++score.score;
 		score.add([duration, [\d_free, modules.synthDef.name.asString]]);
 		^score;
@@ -97,18 +97,18 @@ Raptor : CodexHybrid {
 					options.recHeaderFormat,
 					options.recSampleFormat,
 					options, "", duration,
-					{ this.cleanUp(oscpath, path, normalize) };
+					{ this.cleanup(oscpath, path, normalize) };
 				);
 			});
 		}, {"Warning: Render already in progress".postln});
 	}
 
-	cleanUp { | oscpath, filepath, normalize(false) |
+	cleanup { | oscpath, filepath, normalize(false) |
 		oscpath !? { File.delete(oscpath) };
 		if(normalize, { filepath.normalizePathAudio(0.8) });
-		if(cleanup.isEmpty.not, {
-			cleanup.do(_.value);
-			cleanup.clear;
+		if(cleanup_list.isEmpty.not, {
+			cleanup_list.do(_.value);
+			cleanup_list.clear;
 		});
 		prIsRendering = false;
 		this.renderMessage(filepath);
