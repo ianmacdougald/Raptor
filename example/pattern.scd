@@ -1,5 +1,5 @@
 //Define Function below:
-{ | modules, duration(1) |
+{ | modules, duration(1), cleanup |
 	Pbind(
 		\instrument, modules.synthDef.name,
 		\dur, 0.2,

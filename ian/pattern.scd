@@ -1,5 +1,5 @@
 //Define Function below...
-{ | modules, duration(1) |
+{ | modules, duration(1), cleanup |
 	var tendtime = nil;
 	var tenddur = nil;
 	var tendstrum = nil;
@@ -12,7 +12,7 @@
 		}).flat;
 
 		//Add a function to to the clean up module (a list).
-	        modules.cleanup.add({~bufArray.do(_.free)});
+		cleanup.add({ ~bufArray.do(_.free) });
 
 	}, Pbind(
 		\instrument, modules.synthDef.name,
@@ -24,7 +24,7 @@
 		}), inf),
 		\buf, Pfunc({ | ev |
 			ev.bufArray[ ev.bufnum.asInteger ];
-		}), 
+		}),
 		\pos, Pn(Plazy({ | ev |
 			var start = tendpos ?? {1.0.rand};
 			var end = 1.0.rand;
