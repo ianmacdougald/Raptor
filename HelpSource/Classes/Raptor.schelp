@@ -1,70 +1,45 @@
 TITLE::Raptor
 summary::Iterative pattern renderer
-categories::Libraries>CodexIan
+categories::Libraries>Codices
 
 DESCRIPTION::
-Raptor iteratively renders patterns as audio files via link::Guides/Non-Realtime-Synthesis##NRT synthesis.:: Raptor utilizes the framework establsihed by link::Overviews/CodexIan##CodexIan:: and so can be interacted with in the ways laid out in its link::Guides/CodexIan##guide.::
+Raptor iteratively renders patterns as audio files via link::Guides/Non-Realtime-Synthesis##NRT synthesis.:: Raptor utilizes the framework establsihed by link::Classes/Codex:: and so can be interacted with in the ways laid out in the corresponding link::Guides/Codex##guide.::
 
 CLASSMETHODS::
 
-copymethod:: CodexComposite *new
-
-private::defaultsPath
+copymethod:: Codex *new
 private::makeTemplates
+private::contribute
 
 INSTANCEMETHODS::
 
 method::render
 argument::duration
 Time in seconds of the audio to render.
-argument::normalize
-A boolean that specifies whether or not the rendered file should be normalized.
 
 method::renderN
 argument::n
 An integer specifying how many audio files to render.
 argument::duration
 Time in seconds of the audio to render.
-argument::normalize
-A boolean that specifies whether or not the rendered file should be normalized.
 
 method::stop
-Stops a render in progress.
-private::stopRenderN
-private::stopRender
+Stops process started by link::Classes/Raptor#-renderN::.
 
-method::reset
-Resets the rendering process if an error occurred in the middle of it and it got stuck.
+method::folder
+Gets and sets the folder where recordings are stored.
 
-method::isRendering
-returns::Boolean (true or false) if the rendering process is engaged.
-
-private::prIsRendering
-private::isRenderingN
-
-copymethod:: CodexIncrementer -fileTemplate
-copymethod:: CodexIncrementer -folder
-private::folder
-private::fileTemplate
-method::server
-Gets and sets a reference to a server.
+method::fileName
+Gets and sets the name of the base fileName to be incrementally created.
 
 method::options
 Gets the link::Classes/ServerOptions:: that are used to format and render the audio file.
-method::normalizeFolder
-Normalizes the audio in the the target folder to the level set by the argument.
-method::clearFolder
-Deletes all of the files within the target folder. Be careful with this one.
-private::checkFolder
-private::incrementer
+
 private::getScore
-private::prepareToRender
-private::prRender
-private::cleanUp
-private::renderMessage
-private::initHybrid
-private::processSynthDefs
-private::removeSynthDefs
+private::initCodex
+private::fullPath
+private::increment
+private::extension
 
 EXAMPLES::
 Making a single render is easy.
@@ -76,12 +51,6 @@ The code for making many renders is similar.
 code::
 r = Raptor.new(\example);
 r.renderN(4, 4);
-::
-To render different patterns, define new modules.
-code::
-r = Raptor.new(\example2, \example);
-//If you want, rewrite the pattern module and then run.
-r.render(4, 4);
 ::
 Different render durations can be specifies with functions or streams.
 code::
