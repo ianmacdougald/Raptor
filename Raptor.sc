@@ -24,6 +24,7 @@ Raptor : Codex {
 		if(newFolder.isString){
 			folder = newFolder;
 			folder.mkdir;
+			i = 0;
 		};
 	}
 
@@ -52,7 +53,6 @@ Raptor : Codex {
 	*contribute { | versions |
 		var toQuark = Main.packages.asDict.at(\Raptor);
 		versions.add(\example -> (toQuark+/+"example"));
-		versions.add(\ian -> (toQuark+/+"ian"));
 	}
 
 	renderN { | n(2), duration(1)  |
@@ -102,5 +102,9 @@ Raptor : Codex {
 				}
 			);
 		}
+	}
+
+	play { | clock(TempoClock.default) |
+		^modules.pattern.play(clock, modules.asEvent);
 	}
 }
