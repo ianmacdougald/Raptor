@@ -2,8 +2,8 @@
 name: "Raptor", 
 summary: "Iterative pattern renderer", 
 author: "ianmacdougald",
-version: "0.1.1", 
-dependencies: ["CodexIan"], 
+version: "0.1.2", 
+dependencies: ["Codex"], 
 copyright: "ianmacdougald", 
 license: "GPL"
 )
