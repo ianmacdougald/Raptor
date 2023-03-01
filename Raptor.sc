@@ -15,7 +15,7 @@ Raptor : Codex {
 		semaphore = semaphore ? Semaphore(1);
 		//Use the recording directory by default
 		this.folder = folder ?? {
-			thisProcess.platform.recordingsDir+/+"raptor_renders";
+			thisProcess.platform.recordingsDir+/+"raptor-renders";
 		};
 		fileName ?? { this.fileName = "raptor.wav" };
 	}
