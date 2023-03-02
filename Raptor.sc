@@ -76,8 +76,10 @@ Raptor : Codex {
 
 	getScore { | duration(1.0) |
 		var score = modules.pattern(duration).asScore(duration, 0, modules.asEvent);
-		score.score = [[0, [\d_recv, modules.synthDef.asBytes]]]++score.score;
-		score.add([duration, [\d_free, modules.synthDef.name.asString]]);
+		modules.getSynthDefs.do { | synthDef |
+			score.score = [[0, [\d_recv, synthDef.asBytes]]]++score.score;
+			score.add([duration, [\d_free, synthDef.name.asString]]);
+		};
 		^score;
 	}
 
