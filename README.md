@@ -1,6 +1,6 @@
 # Description
 
-Raptor iteratively renders [patterns](https://doc.sccode.org/Tutorials/Streams-Patterns-Events1.html) as audio files via [Non-realtime synthesis](https://doc.sccode.org/Guides/Non-Realtime-Synthesis.html). Raptor uses the framework defined by [Codex](https://github.com/ianmacdougald/Codex), and so can be interacted with per those procedures.
+Raptor is an iterative [pattern](https://doc.sccode.org/Tutorials/Streams-Patterns-Events1.html) renderer for mass producing audio files via [non-realtime synthesis](https://doc.sccode.org/Guides/Non-Realtime-Synthesis.html). Raptor uses the framework defined by [Codex](https://github.com/ianmacdougald/Codex) in order to streamline the configuration and sharing of fun things to render.
 
 ## Installation
 
