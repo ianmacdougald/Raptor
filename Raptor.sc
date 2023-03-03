@@ -50,11 +50,6 @@ Raptor : Codex {
 		templater.pattern;
 	}
 
-	*contribute { | versions |
-		var toQuark = Main.packages.asDict.at(\Raptor);
-		versions.add(\example -> (toQuark+/+"example"));
-	}
-
 	renderN { | n(2), duration(1)  |
 		routArray = n.collect { this.render(duration.value) };
 	}
